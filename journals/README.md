@@ -1,10 +1,8 @@
-# RobinEdit journals
+# Inherited RobinEdit journals (historical)
 
-Session notes for the React RobinEdit port and the Asia-style Super Robin Hood ROM layouts it depends on (`mapinfo`, exits, `blockrous`, objects/keys, CHR/`mapchrsdefs`, `coinco`, play-from-map).
+Session notes copied with the RobinEdit shell for Super Robin Hood (mapper 71). They remain useful while Magician I/O is incomplete, but **MagicianEdit port research lives in [`../journal/`](../journal/)**.
 
-These entries were copied from [ap0ught/SuperRobinHoodNESSource](https://github.com/ap0ught/SuperRobinHoodNESSource) (`journal/`). That parent repo still holds the full game source, PDS tree, assembler notes, and non-editor journals (`01`–`03`).
-
-Asia dump vs `srh-rebuilt.nes` (hashes, header, which to use): **[`docs/ROMS.md`](../docs/ROMS.md)**.
+Asia dump vs `srh-rebuilt.nes` (Robin): see old [`docs/ROMS.md`](../docs/ROMS.md) until rewritten for Magician (issue #3 / [`journal/10-scaffold-dump-policy.md`](../journal/10-scaffold-dump-policy.md)).
 
 | File | Topic |
 |------|--------|
@@ -15,4 +13,4 @@ Asia dump vs `srh-rebuilt.nes` (hashes, header, which to use): **[`docs/ROMS.md`
 | [08-castle-map-numbering.md](08-castle-map-numbering.md) | Map N vs geographic castle overview (`mapheights` + world X) |
 | [09-robin-settings-cheatlives.md](09-robin-settings-cheatlives.md) | Robin stats / cheatLives: cart vs dizzy9 vs `patchRobin` |
 
-Agent entry points: see [`AGENTS.md`](../AGENTS.md) and [`.cursor/skills/`](../.cursor/skills/).
+Agent entry: [`AGENTS.md`](../AGENTS.md) (still Robin-branded until issue #2) and [`../journal/README.md`](../journal/README.md).
