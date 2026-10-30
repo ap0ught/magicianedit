@@ -2,7 +2,9 @@
 
 Browser-based map / object editor for **Super Robin Hood** (NES, Codemasters, mapper 71).
 
-This is a Vite + React + TypeScript remake of the Windows [RobinEdit 0.4.4](https://www.romhacking.net/utilities/1828/) utility (Łukasz Kur / dizzy9), aimed at reading and writing the same Asia-style cart layout: map strips, typed objects, PP1 CHR packs, and Robin stats.
+This is a Vite + React + TypeScript remake of the Windows [RobinEdit 0.4.4](https://www.romhacking.net/utilities/1828/) utility by **Łukasz Kur / dizzy9** (upstream tool author on romhacking.net). It aims at the same Asia-style cart layout: map strips, typed objects, PP1 CHR packs, and Robin stats.
+
+**Versioning:** dizzy9’s Windows tool is **0.4.4**. This React app’s first milestone release is **v0.5.0** (React port of that utility). Original Windows archives live in [`upstream/`](upstream/) with attribution — see [`docs/RELEASE.md`](docs/RELEASE.md) for GitHub Actions builds and desktop-exe options.
 
 ## ROM requirement
 
@@ -38,6 +40,16 @@ make build    # production build → dist/
 
 Requires Node.js and npm.
 
+## Upstream Windows RobinEdit
+
+Original Clickteam/MMF2 Windows editor by **dizzy9** (Łukasz Kur): archives and credit notes in [`upstream/`](upstream/). Also attached to GitHub Releases when published.
+
+## Build / release
+
+- Local: `make build` → static `dist/` SPA.
+- GitHub Actions: tag `v*` → [`.github/workflows/release.yml`](.github/workflows/release.yml) runs `npm ci && npm run build` and attaches a dist tarball to the release.
+- Native Win/Mac/Linux **exe**: React stays web; wrap later with Tauri (preferred light shell), Electron, PWA, or Capacitor — see [`docs/RELEASE.md`](docs/RELEASE.md). Not required for the browser editor.
+
 ## License / cart IP
 
-Editor source in this repo is yours to use under whatever terms you apply here. The Super Robin Hood ROM and original game assets remain third-party IP — obtain a dump you are allowed to use; do not commit `.nes` files to this repository.
+Editor source in this repo is yours to use under whatever terms you apply here. The Super Robin Hood ROM and original game assets remain third-party IP — obtain a dump you are allowed to use; do not commit `.nes` files to this repository. Upstream Windows RobinEdit remains dizzy9’s work.

@@ -1,0 +1,59 @@
+# Build the Vite SPA and attach dist/ when a version tag is pushed (or on workflow_dispatch).
+name: Release build
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Existing git tag to build (e.g. v0.5.0). Leave empty to build HEAD only."
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.tag || github.ref }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install and build
+        run: |
+          npm ci
+          npm run build
+
+      - name: Pack dist
+        run: |
+          TAG="${{ github.event.inputs.tag || github.ref_name }}"
+          NAME="robinedit-${TAG}-dist"
+          mkdir -p out
+          cp -a dist "out/${NAME}"
+          (cd out && tar -czf "${NAME}.tar.gz" "${NAME}")
+          echo "ASSET=out/${NAME}.tar.gz" >> "$GITHUB_ENV"
+          echo "ASSET_NAME=${NAME}.tar.gz" >> "$GITHUB_ENV"
+
+      - name: Upload dist to release (tag push)
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ env.ASSET }}
+          fail_on_unmatched_files: true
+
+      - name: Upload dist artifact (manual / fallback)
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.ASSET_NAME }}
+          path: ${{ env.ASSET }}
