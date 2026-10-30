@@ -729,7 +729,7 @@ label { display: flex; gap: 6px; align-items: center; font-size: 14px; }
 
 .empty {
   margin: auto;
-  max-width: 460px;
+  max-width: 520px;
   text-align: center;
   padding: 24px;
 }
@@ -742,7 +742,58 @@ label { display: flex; gap: 6px; align-items: center; font-size: 14px; }
 }
 .empty-sub { margin: 0 0 12px; color: var(--muted); }
 .overview-open { width: 100%; margin-bottom: 10px; }
-.samples { display: flex; gap: 8px; justify-content: center; margin-top: 12px; }
+.rom-picker {
+  margin: 16px 0 8px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #100e0b;
+  text-align: left;
+}
+.rom-picker-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.rom-picker-title {
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.rom-picker-link {
+  font-size: 12px;
+  color: #c9b48a;
+}
+.rom-picker-link:hover { text-decoration: underline; }
+.rom-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 8px;
+}
+.rom-grid button {
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.rom-empty-hint {
+  margin: 0;
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+.rom-empty-hint a { color: #c9b48a; }
+.rom-empty-hint code {
+  font-size: 12px;
+  padding: 1px 4px;
+  border-radius: 3px;
+  background: #1a1712;
+}
+.samples { display: flex; gap: 8px; justify-content: center; margin-top: 12px; flex-wrap: wrap; }
+
 .error, .toast { color: #ffb0a4; }
 .toast {
   position: fixed;

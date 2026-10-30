@@ -7,7 +7,7 @@ Guidance for assistants working on **RobinEdit** (Vite + React + TypeScript edit
 ## Non‑negotiables
 
 - **Edit in place** on an Asia-style layout. Do not invent object types, invent exit tables, or invent CHR-list growth.
-- **Never commit `.nes` files** (or secrets). Users supply a dump; `public/*.nes` is gitignored.
+- **Never commit `.nes` files** (or secrets). Users supply a dump; `roms/*.nes` and `public/*.nes` are gitignored. Empty-screen list comes from project-root `roms/` (`vite.roms.ts`: `/api/roms`, `/roms/*`, build manifest).
 - Prefer **change-timeline review before Save** when the UI offers it.
 - Validate with `npx tsc --noEmit` and `make check` when sample ROMs exist under `public/`.
 
@@ -51,4 +51,4 @@ make check    # ROM selftest (needs public/*.nes)
 make build    # dist/
 ```
 
-Play bridge: `vite.play-bridge.ts` (dev `/api/play`). Source under `src/`.
+Play bridge: `vite.play-bridge.ts` (dev `/api/play`). Local ROM list: `vite.roms.ts` + `roms/`. Source under `src/`.

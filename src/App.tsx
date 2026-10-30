@@ -104,6 +104,12 @@ const COLLECTABLE_TYPES = new Set([5, 7, 8]); // KEY, SECRET, MARION
 
 type Mode = "bg" | "obj" | "castle" | "robin";
 
+/** Rebuilt mapper-71 cart published in the parent source repo (download → place in roms/). */
+const REBUILT_ROM_URL =
+  "https://github.com/ap0ught/SuperRobinHoodNESSource/blob/master/srh-rebuilt.nes";
+const REBUILD_ROMS_HINT =
+  "Download a rebuilt .nes (srh-rebuilt.nes) from SuperRobinHoodNESSource, then drop it into the project roms/ folder.";
+
 const CREDITS = {
   title: "RobinEdit",
   /** React port (this app) — ap0ught / Christopher Mayfield */
@@ -1295,6 +1301,45 @@ function Empty({
   onAbout: () => void;
 }) {
   const samples = typeof __SAMPLE_ROMS__ === "undefined" ? [] : __SAMPLE_ROMS__;
+  const [roms, setRoms] = useState<string[]>([]);
+
+  const refreshRoms = () => {
+    void (async () => {
+      try {
+        const api = await fetch("/api/roms");
+        if (api.ok) {
+          const data = (await api.json()) as { roms?: string[] };
+          setRoms(Array.isArray(data.roms) ? data.roms : []);
+          return;
+        }
+      } catch {
+        /* fall through to production manifest */
+      }
+      try {
+        const man = await fetch("/roms/manifest.json");
+        if (man.ok) {
+          const data = (await man.json()) as { roms?: string[] };
+          setRoms(Array.isArray(data.roms) ? data.roms : []);
+        } else {
+          setRoms([]);
+        }
+      } catch {
+        setRoms([]);
+      }
+    })();
+  };
+
+  useEffect(() => {
+    refreshRoms();
+    const hot = import.meta.hot;
+    if (!hot) return;
+    const onChange = () => refreshRoms();
+    hot.on("srh:roms-changed", onChange);
+    return () => {
+      hot.off("srh:roms-changed", onChange);
+    };
+  }, []);
+
   return (
     <div className="empty">
       <h1>{CREDITS.title}</h1>
@@ -1305,6 +1350,45 @@ function Empty({
       <button className="primary" onClick={onOpen}>
         Open
       </button>
+      <div className="rom-picker" title={REBUILD_ROMS_HINT}>
+        <div className="rom-picker-head">
+          <span className="rom-picker-title">ROMs in roms/</span>
+          <a
+            className="rom-picker-link"
+            href={REBUILT_ROM_URL}
+            target="_blank"
+            rel="noreferrer"
+            title={REBUILD_ROMS_HINT}
+          >
+            Get rebuilt ROM
+          </a>
+        </div>
+        {roms.length > 0 ? (
+          <div className="rom-grid">
+            {roms.map((name) => {
+              const label = name.replace(/\.nes$/i, "");
+              return (
+                <button
+                  key={name}
+                  type="button"
+                  title={`Load ${name}`}
+                  onClick={() => onSample(`/roms/${encodeURIComponent(name)}`, label)}
+                >
+                  {label}
+                </button>
+              );
+            })}
+          </div>
+        ) : (
+          <p className="rom-empty-hint">
+            No local carts yet. Download{" "}
+            <a href={REBUILT_ROM_URL} target="_blank" rel="noreferrer">
+              srh-rebuilt.nes
+            </a>{" "}
+            (or your Asia dump) and place it in the project <code>roms/</code> folder, then refresh.
+          </p>
+        )}
+      </div>
       {samples.length > 0 && (
         <div className="samples">
           {samples.map((s) => (

@@ -13,9 +13,12 @@ RobinEdit does **not** ship Super Robin Hood ROMs. You need a mapper-71 Super Ro
 Ways to open a cart:
 
 1. **Drop** a `.nes` file onto the editor window, or use **Open**.
-2. Optional quick-load buttons: place sample files at `public/asia.nes` and/or `public/rebuilt.nes` (gitignored). Then `make` and use the empty-state sample links.
+2. Put mapper-71 carts in project-root **`roms/`** (gitignored `*.nes`; keep `.gitkeep`). Dev lists them via `GET /api/roms` and serves `/roms/<file>`; production builds copy into `dist/roms/` plus `manifest.json`. The empty screen shows those files for one-click load.
+3. Optional legacy samples: `public/asia.nes` and/or `public/rebuilt.nes` (gitignored) still appear as quick-load buttons when present.
 
-`make check` expects those same `public/*.nes` files and asserts map widths, PP1 tiles, exits, pickups, and object insert/delete.
+A rebuilt image (`srh-rebuilt.nes`) is available from [SuperRobinHoodNESSource](https://github.com/ap0ught/SuperRobinHoodNESSource/blob/master/srh-rebuilt.nes) — download it into `roms/` (do not commit the dump). See also [`prerelease.nes`](https://github.com/ap0ught/SuperRobinHood/tree/master/roms) in the rebuild repo.
+
+`make check` expects `public/*.nes` sample files and asserts map widths, PP1 tiles, exits, pickups, and object insert/delete.
 
 ## Journals / agent notes
 

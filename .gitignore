@@ -7,3 +7,4 @@ dist
 # Local Super Robin Hood dumps (do not commit cart IP)
 *.nes
 public/*.nes
+roms/*.nes
