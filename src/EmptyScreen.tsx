@@ -103,8 +103,8 @@ export function Empty({
     <div className="empty">
       <h1>{CREDITS.title}</h1>
       <p className="empty-sub">
-        Magician (MMC3) load is not in this build. The inherited shell still opens a mapper 71 cart
-        from <code>roms/</code>.
+        Open a Magician cart: MMC3 mapper 4, 128 KiB PRG and 128 KiB CHR. Mapper 71 Robin carts are
+        rejected.
       </p>
       <button className="primary" onClick={onOpen}>
         Open
@@ -132,8 +132,7 @@ export function Empty({
         ) : (
           <p className="rom-empty-hint">
             No local carts yet. Dump policy is <code>docs/ROMS.md</code> in the repo — do not commit{" "}
-            <code>.nes</code> files. Until Magician load lands, place a mapper 71 cart in{" "}
-            <code>roms/</code> and refresh.
+            <code>.nes</code> files. Place a Magician dump in <code>roms/</code> and refresh.
           </p>
         )}
       </div>

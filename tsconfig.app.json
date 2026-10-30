@@ -17,5 +17,5 @@
     "noUnusedParameters": true
   },
   "include": ["src"],
-  "exclude": ["src/selftest.ts"]
+  "exclude": ["src/selftest.ts", "src/magician/selftest.ts"]
 }

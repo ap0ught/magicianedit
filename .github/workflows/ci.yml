@@ -1,5 +1,6 @@
-# Pull-request / main CI: install and production build (tsc + vite).
-# Selftest (npm run check) needs local .nes dumps and is not run in CI.
+# Pull-request / main CI: Magician load/save selftest (synthetic iNES, no ROM),
+# then the production build (tsc + vite).
+# `npm run check` also runs the inherited mapper 71 selftest and needs local dumps.
 name: CI
 
 on:
@@ -24,7 +25,8 @@ jobs:
           node-version: "22"
           cache: npm
 
-      - name: Install and build
+      - name: Install, test, and build
         run: |
           npm ci
+          npm run check:magician
           npm run build

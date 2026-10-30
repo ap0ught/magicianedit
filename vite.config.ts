@@ -11,9 +11,6 @@ export default defineConfig({
   plugins: [react(), playBridge(), romsPlugin()],
   server: { fs: { allow: [here] } },
   define: {
-    __SAMPLE_ROMS__: JSON.stringify([
-      { label: "Inherited mapper 71", file: "/asia.nes" },
-      { label: "Inherited rebuild", file: "/rebuilt.nes" },
-    ]),
+    __SAMPLE_ROMS__: JSON.stringify([]),
   },
 });

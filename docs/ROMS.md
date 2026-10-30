@@ -4,7 +4,7 @@ MagicianEdit does **not** ship `.nes` files. They are gitignored (`*.nes`, `publ
 
 **Do not commit carts or secrets.**
 
-Magician ROM **parsing is not implemented** in this tree yet. The notes below are the dump policy the editor will pin to. Until that loader exists, the inherited shell still opens **mapper 71** carts only; a Magician image fails that check on purpose. This document replaces the old Super Robin Hood Asia / rebuild note. Those fingerprints stay in [SuperRobinHoodNESSource `docs/ROMS.md`](https://github.com/ap0ught/SuperRobinHoodNESSource/blob/master/docs/ROMS.md).
+The loader in `src/magician/` accepts mapper **4**, 128 KiB PRG, 128 KiB CHR, **262160** bytes. Mapper 71 is rejected. A body SHA1 other than Beta 1 is a warning, not a refusal. Pack offsets come from the descriptors in the opened file. This document replaces the old Super Robin Hood Asia / rebuild note. Those fingerprints stay in [SuperRobinHoodNESSource `docs/ROMS.md`](https://github.com/ap0ught/SuperRobinHoodNESSource/blob/master/docs/ROMS.md).
 
 ## What to pin
 
@@ -52,9 +52,9 @@ Copied from `asm/patches.py` `CARTS`. Re-check with `tools/carts.py` before trea
 
 A production build copies whatever `.nes` files are present in `roms/` into `dist/roms/`. That output is local. Do not publish carts from CI.
 
-## Inherited shell (until Magician I/O)
+## Checks
 
-`make check` still looks for `public/asia.nes` and `public/rebuilt.nes`. Those are mapper 71 Super Robin Hood images for the inherited editor, not Magician dumps. Opening a Magician cart in the current UI hits the mapper 71 guard in `src/rom.ts`. Leave that guard in place until a Magician loader exists.
+`npm run check:magician` builds a synthetic iNES image and round-trips it. It does not read a `.nes` file. If the Beta 1 dump is on disk at the path recorded in that test, the same run also checks a byte-identical save. `npm run check` then runs `src/selftest.ts`, which still looks for mapper 71 samples at `public/asia.nes` and `public/rebuilt.nes`. Those samples are not Magician carts.
 
 ## Licensing
 

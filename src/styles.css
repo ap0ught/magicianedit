@@ -1060,3 +1060,25 @@ button.play-from-map:hover:not(:disabled) {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+.warn {
+  margin: 0;
+  padding: 8px 12px;
+  color: var(--gold);
+  background: #2a2214;
+  border-bottom: 1px solid var(--line);
+  font-size: 13px;
+}
+.pal-bytes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 8px 0;
+}
+.pal-bytes input {
+  width: 3.2em;
+  padding: 4px 6px;
+  background: #100e0b;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  font-variant-numeric: tabular-nums;
+}
