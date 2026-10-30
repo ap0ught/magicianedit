@@ -18,8 +18,9 @@ export function AboutModal({ onClose }: { onClose: () => void }) {
         <h2>Author</h2>
         <CreditsBlock />
         <p className="hint">
-          This React port edits the same mapper 71 Super Robin Hood ROM layouts as dizzy9’s Windows
-          RobinEdit {CREDITS.upstreamVersion} tool.
+          MagicianEdit is a planned port of RobinEdit. This build still edits mapper 71 layouts, the
+          same family as dizzy9’s Windows RobinEdit {CREDITS.upstreamVersion}. Magician MMC3 load and
+          save are not implemented yet.
         </p>
         <button className="primary" onClick={onClose}>
           Close

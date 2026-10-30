@@ -1,8 +1,8 @@
 {
-  "name": "robinedit",
+  "name": "magicianedit",
   "private": true,
-  "version": "0.6.1",
-  "description": "React port of RobinEdit for Super Robin Hood (NES, mapper 71)",
+  "version": "0.1.0",
+  "description": "Magician NES editor (MMC3); planned port of RobinEdit",
   "author": "Christopher Mayfield <cdm@ap0.org> (https://github.com/ap0ught)",
   "type": "module",
   "scripts": {

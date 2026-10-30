@@ -38,7 +38,7 @@ jobs:
       - name: Pack dist
         run: |
           TAG="${{ github.event.inputs.tag || github.ref_name }}"
-          NAME="robinedit-${TAG}-dist"
+          NAME="magicianedit-${TAG}-dist"
           mkdir -p out
           cp -a dist "out/${NAME}"
           (cd out && tar -czf "${NAME}.tar.gz" "${NAME}")

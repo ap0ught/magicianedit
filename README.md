@@ -6,7 +6,7 @@ This repository starts as a same-owner clone of `ap0ught/robinedit` (GitHub does
 
 ## Status
 
-**Planning only.** Do not expect Magician load/save or map editing yet. The current tree still embeds Super Robin Hood (mapper 71) editor logic from RobinEdit until those milestones land.
+**Planning only.** Package `magicianedit` **0.1.0**. Do not expect Magician load/save or map editing yet. The current tree still embeds Super Robin Hood (mapper 71) editor logic from RobinEdit until those milestones land. Port notes: [`journal/`](journal/). Inherited Robin notes: [`journals/`](journals/). Assistant guide: [`AGENTS.md`](AGENTS.md).
 
 ## Related repos
 
@@ -19,9 +19,9 @@ This repository starts as a same-owner clone of `ap0ught/robinedit` (GitHub does
 
 ## ROM requirement
 
-MagicianEdit will **not** ship Magician ROMs. Obtain a dump you are allowed to use (e.g. USA / Beta 1 as documented in magician-nes-re). Do **not** commit `.nes` files.
+MagicianEdit will **not** ship Magician ROMs. Dump policy (Beta 1 pin, battery bit, vectors, gitignored `roms/`): **[`docs/ROMS.md`](docs/ROMS.md)**. Do **not** commit `.nes` files.
 
-Until Magician I/O lands, the inherited RobinEdit path still expects mapper-71 Super Robin Hood dumps for local smoke tests — see the RobinEdit docs if you need that temporarily.
+Until Magician I/O lands, the inherited shell still expects a mapper 71 cart for local smoke tests. A Magician dump will not load yet.
 
 ## Run (inherited shell)
 

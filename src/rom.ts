@@ -207,7 +207,7 @@ function findBlkstl(file: Uint8Array): number {
     }
     from = at + 1;
   }
-  throw new Error("This ROM does not contain Super Robin Hood block graphics.");
+  throw new Error("This ROM does not contain the inherited mapper 71 block graphics.");
 }
 
 /** Locate the 13×6-byte mapinfo directory by width pattern. */
@@ -457,7 +457,7 @@ export function loadRom(bytes: Uint8Array, name: string): RomDoc {
     throw new Error("That file is not an iNES ROM.");
   }
   const mapper = (bytes[7] & 0xf0) | (bytes[6] >> 4);
-  if (mapper !== 71) throw new Error(`RobinEdit edits the mapper 71 cart. This ROM is mapper ${mapper}.`);
+  if (mapper !== 71) throw new Error(`MagicianEdit does not load this cart yet. The inherited shell edits mapper 71; this ROM is mapper ${mapper}.`);
   const trainer = (bytes[6] & 4) !== 0;
   const prgStart = 16 + (trainer ? 512 : 0);
   const prgBytes = bytes[4] * 16384;

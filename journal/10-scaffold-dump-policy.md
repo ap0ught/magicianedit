@@ -4,19 +4,21 @@ Milestone **1** (scaffold / rebrand) plus guardrails that belong in docs before 
 
 ## Package / UI identity (issue #1)
 
-Clone still carries RobinEdit npm metadata. Safe renames without Magician I/O:
+At clone time the tree carried RobinEdit npm metadata. Safe renames without Magician I/O:
 
 | Location | Current (fork) | Recommended |
 |----------|----------------|-------------|
 | `package.json` `name` | `robinedit` | `magicianedit` |
 | `package.json` `description` | Super Robin Hood / mapper 71 | Magician NES editor (MMC3); planned RobinEdit port |
-| `package.json` `version` | `0.6.1` (Robin line) | Keep or reset baseline (e.g. `0.1.0`) — document choice in RELEASE |
+| `package.json` `version` | `0.6.1` (Robin line) | **Reset to `0.1.0`** — new MagicianEdit line, not RobinEdit 0.6.x (`docs/RELEASE.md`) |
 | `index.html` `<title>` | `RobinEdit` | `MagicianEdit` |
 | `Makefile` banner | “RobinEdit → http://…” | MagicianEdit |
 | `AGENTS.md` header | RobinEdit / mapper 71 | MagicianEdit + pointers to magician-nes-re / pds6502 |
 | `src/App.tsx` comment | “Main RobinEdit shell” | MagicianEdit shell (logic can stay Robin until load lands) |
 
 User-visible strings in panels (`CastleRobinPanels`, JumpSelects “Marion”, etc.) can wait for milestones 4–5; do not rewrite `App.tsx` Magician formats in #1.
+
+**Landed with milestone 1:** `name` `magicianedit`, description as in the table, version **0.1.0**, `index.html` title, Makefile banner, AGENTS header, and the App shell comment. The header badge is `0.1.0` (the old `0.4.4` badge was dizzy9’s tool version; About still credits that). Panel copy stays.
 
 Magician branding anchors in source trees:
 
@@ -48,15 +50,13 @@ Replace Robin mapper-71 Asia/rebuild docs with Magician policy. Facts from magic
 
 ## Quarantine Robin modules (issue #4)
 
-Robin modules that must not silently become Magician paths:
+**Decision:** keep the Robin format modules compiling **in place**. Do not move or delete them in this milestone. No `src/robin/` vs `src/magician/` split, no dead-path unplug, and no gradual deletion.
 
-`rom.ts`, `pp1.ts`, `objects.ts`, `pickups.ts`, `keys.ts`, `secrets.ts`, `exits.ts`, `overview.ts`, `CastleRobinPanels.tsx`, `play.ts`, `robinSpawn.ts`, `selftest.ts`.
+There is no Magician loader to replace them. `rom.ts`, `objects.ts`, `pickups.ts`, `secrets.ts`, `exits.ts`, and `play.ts` are the live editor. `pp1.ts` is only imported by `rom.ts`. `App`, `Stage`, the panels, `LevelNav`, `selftest`, and `playBridge` all import that set. Unplugging it would remove the only editor this tree has.
 
-Recommended staging:
+Also frozen, same rule, even though they were left off the issue list: `settings.ts`, `robinSpawn.ts`, `keys.ts`, `anim.ts`, `sprites.ts`, `draw.ts`, `CastleRobinPanels.tsx`.
 
-1. **Short term:** keep compiling; after #10, reject non-MMC3 Magician loads (or keep Robin path only if explicitly opened as Robin — prefer hard Magician-only once I/O lands).
-2. **Medium:** `src/robin/` vs `src/magician/` when map document model (#11) exists; delete Robin-only UX (#18, #23) after Magician panels work.
-3. No big-bang rewrite in scaffold milestone.
+New Magician format code goes in **new files** and must not grow these. A folder move waits until the first Magician document type exists.
 
 ## `.nes` gitignore / CI (issue #29)
 
