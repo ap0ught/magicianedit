@@ -14,5 +14,6 @@ Inherited Robin-only session notes remain under [`journals/`](../journals/) (`04
 | [13-level-chr-object-pointers.md](13-level-chr-object-pointers.md) | `curlev`/`curlevind`, level descriptors, CHR, `actob` | #8, #16, #24 |
 | [14-objects-events-shops.md](14-objects-events-shops.md) | `obchars` / OB2 / PROBS / SHOPDAT vs Robin KINDS | #9, #18–#23 |
 | [15-play-ci-releases.md](15-play-ci-releases.md) | Play bridge, BizHawk/FCEUX, selftest, release CI | #13, #25–#28 |
+| [16-title-screen.md](16-title-screen.md) | Title scene: `dotitle`, `TIT.DAT`, CHR splits | #32 |
 
 Do **not** commit `.nes` dumps. Pin MagicianEdit research against **Beta 1** first (see journal 10 / magician-nes `asm/patches.py`).
