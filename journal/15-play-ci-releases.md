@@ -16,7 +16,7 @@ Magician research targets:
 
 - Set entry via `curlev` / `newlev` / `stlev` / title→game path (journal 13).
 - Spawn: player slot `pi` position bytes (`obxl`…`obyh`), not `robinxl`.
-- Drop Robin title-NOP assumptions unless measured on Magician title (`dotitle`).
+- Drop Robin title-NOP assumptions unless measured on Magician title (`dotitle`). The title is a packed scene plus two CHR splits, not a level map — journal 16.
 
 Validate patches against **Beta 1** in BizHawk before advertising Play.
 
