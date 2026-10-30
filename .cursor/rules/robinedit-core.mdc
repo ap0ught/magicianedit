@@ -1,0 +1,14 @@
+---
+description: Core RobinEdit / Super Robin Hood editor constraints
+alwaysApply: true
+---
+
+# RobinEdit core
+
+- Mapper **71** Super Robin Hood; edit Asia-style layout **in place**.
+- Do **not** invent object types, exit tables, or CHR-list growth.
+- Ambient spider/bat/rat and heart/coin pads are **blockrous tiles**, not Insert enemies.
+- Never commit `.nes` ROMs or secrets.
+- Prefer save **change timeline** review before writing the ROM.
+- Validate with `npx tsc --noEmit` and `make check` when sample ROMs exist under `public/`.
+- Deep workflows: see `AGENTS.md` and `.cursor/skills/`.
