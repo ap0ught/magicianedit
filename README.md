@@ -15,6 +15,10 @@ Ways to open a cart:
 
 `make check` expects those same `public/*.nes` files and asserts map widths, PP1 tiles, exits, pickups, and object insert/delete.
 
+## Journals / agent notes
+
+Editor session notes (ROM layouts, exits, tiles, port status) live in [`journals/`](journals/). Start with [`journals/README.md`](journals/README.md). Agent guidance: [`AGENTS.md`](AGENTS.md).
+
 ## Relation to the parent project
 
 This editor grew inside [ap0ught/SuperRobinHoodNESSource](https://github.com/ap0ught/SuperRobinHoodNESSource) (official PDS source, cc65 rewrite notes, docs, and tooling). It was split out so the React editor can version and ship on its own.
