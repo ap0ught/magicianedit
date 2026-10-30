@@ -33,25 +33,79 @@ Authoritative labels: trailing comments on `obchars` in `magician-nes/vendor/Mag
 | | | 42 | statue of wizard |
 | | | 43 | twin man |
 
-Animation / AI bodies: `OB2.SRC` (comments: Little dragon, Armour, Wise old man, Skeleton, Young woman, Spider, Stoneman, Rat, Fire elemental, Demon, Spikes, Abadon, Treasure chest, Slab, Pendulum, Fountain, Statue, Sphinx, Final spell machine, Twin man, …).
+`OB2.SRC` section comments cover types 23–43 only (little dragon through twin man). Mushroom, troll, spectre, and winged serpent are types 5, 9, 12, and 20. This vendor drop has no object-AI file for types 0–22.
 
-### PROBDAT screen-trigger kinds (`st_*`)
+Shops and spells are not `obchars` types. A shop is `pt_shop` plus `SHOPDAT.SRC` (below). Spell names are `sptxt`.
 
-`PROBDAT.SRC`: `st_msg`, `st_obj`, `st_che`, `st_sta`, `st_bar`, `st_adv`, `st_mon`, `st_gid`, `st_wiz`, `st_spc`, `st_dmn`, `st_trl`, `st_beh`, `st_spi`, `st_wer`, `st_ven`, `st_rat`, `st_wng`, `st_arm`, `st_skl`, `st_pen`, `st_rok`, `st_sto`, `st_vin`, `st_tur`.
+### Screen triggers use their own ids (`st_*`)
+
+`PROBDAT.SRC` defines `st_msg`…`st_tur` as `$00`–`$18`. `PROBS.SRC` `scnevents` keeps the low 5 bits of the type byte (`and #$1f`) and dispatches through `trvl`/`trvh`. That id is a separate numbering from `obchars`. Each `tr*` handler loads one fixed `obchars` index. `st_obj` is the exception: its data byte is the index.
+
+| `st_*` | id | `obchars` loaded |
+|--------|----|------------------|
+| `st_msg` | `$00` | none (message) |
+| `st_obj` | `$01` | data byte |
+| `st_che` | `$02` | `$23` treasure chest |
+| `st_sta` | `$03` | `$13` stalagmite |
+| `st_bar` | `$04` | `$0F` barbarian |
+| `st_adv` | `$05` | `$10` adventurer |
+| `st_mon` | `$06` | `$11` monk |
+| `st_gid` | `$07` | none (guidance) |
+| `st_wiz` | `$08` | `$01` wizard |
+| `st_spc` | `$09` | `$0C` spectre |
+| `st_dmn` | `$0A` | `$20` demon |
+| `st_trl` | `$0B` | `$09` troll |
+| `st_beh` | `$0C` | `$12` beholder |
+| `st_spi` | `$0D` | `$1C` spider |
+| `st_wer` | `$0E` | `$15` werebat |
+| `st_ven` | `$0F` | `$16` venworm |
+| `st_rat` | `$10` | `$1E` rat |
+| `st_wng` | `$11` | `$14` winged serpent |
+| `st_arm` | `$12` | `$18` armour |
+| `st_skl` | `$13` | `$1A` skeleton |
+| `st_pen` | `$14` | `$25` pendulum |
+| `st_rok` | `$15` | `$21` spikes on roof |
+| `st_sto` | `$16` | `$1D` stoneman |
+| `st_vin` | `$17` | `$0E` vines |
+| `st_tur` | `$18` | `$0B` turtle |
+
+`tr01` (`st_obj`) copies the data byte into X. Data `$06` (talking tree) and `$19` (wise man) replace that data byte with `%00111100` before `setobp`. The `st_rok` comment says "rock monster", and `tr15` does `ldx #$21`, but no `PROBDAT` row uses `st_rok`. Placed spikes are `st_obj,$21`. No `obchars` comment is named rock monster.
 
 Placement comments: H levels use trigger_x = object x; V uses trigger_y; ground from `obxyst` − type `obyr`.
+
+### Movement classes are not type ids
+
+`TXT/MOVEMENT.TXT` partitions all 44 names into behavior classes. The class number is not stored as the type. The type byte’s high 3 bits are a movement-limit field in `actobxy`, separate from this list. Robin’s PLATFORM (H) and PLATFORM (V) are kinds; Magician’s travel shape is one of these classes.
+
+| class | behavior | kinds |
+|-------|----------|-------|
+| 0 | specific or no movement | every name not listed below (the file says "old woman" for old lady) |
+| 1 | patrol between x limits; spells when the player shares y | wizard, barbarian, adventurer, monk |
+| 2 | face the player and chase | troll, venworm, armour, skeleton, spider, stoneman, rat |
+| 3 | gentle bob | beholder |
+| 4 | winged flying | winged serpent, werebat |
+| 5 | ghostly | spectre, demon |
 
 ### Player trigger kinds (`pt_*`)
 
 `pt_dmap`, `pt_left`/`pt_rigt`/`pt_uppp`/`pt_down`, `pt_dyn0`/`pt_dyn1`/`pt_dyn2`, `pt_shop`, `pt_maze`, `pt_tree`, `pt_holy`, `pt_mult`, `pt_weak`, `pt_fill`, `pt_fire`, `pt_upex`.
 
-These are Magician’s counterpart to Robin exits/secrets rails (#18, #21) — not MAPSCROL exit chips.
+These are Magician’s counterpart to Robin exits/secrets rails (#18, #21) — not MAPSCROL exit chips. They are not `obchars` types.
 
 ## Robin KINDS that do **not** apply
 
-From `magicianedit/src/objects.ts`: FLASH BLOCK, ARCHER, PLATFORM H/V, KEY, CANNON, SECRET, MARION, WATER — plus `pickups.ts` coinco, `keys.ts` LINK, `secrets.ts`. Gate/delete in #23 once Magician object UX exists.
+From `magicianedit/src/objects.ts`: FLASH BLOCK, ARCHER, PLATFORM H/V, KEY, CANNON, SECRET, MARION, WATER — plus `pickups.ts` coinco, `keys.ts` LINK, `secrets.ts`. Those ids are neither `obchars` indices nor `st_*` values. `MISC.SRC` `obtxt` has an inventory KEY string; it is not a placed object and has no door LINK. Gate/delete in #23 once Magician object UX exists.
 
-UX that **does** still apply in spirit: move / inspect / insert / delete markers on a stage (#19–#20), but records are PROBDAT/event-bank shaped with free-space constraints unlike Robin packed lists.
+Object-panel actions (`src/ObjectPanel.tsx`, `src/objects.ts`) against that numbering:
+
+| Action | What carries over |
+|--------|-------------------|
+| Insert | A new marker is a screen-trigger record. `st_obj` stores the `obchars` index in the data byte. Every other `st_*` loads the fixed index in the table above. Robin KINDS ids 1–9 are not written. |
+| Delete | Removes that trigger record. `scnevents` ends the list when the first byte is `$81`. |
+| Move | Changes the trigger coordinate. `moveObject` (column, pixel y, platform ends) has no matching fields. |
+| Inspectors | The slot still shows the selected marker. Flash, archer, cannon, key LINK, secret script, and water fields have no Magician layout. The fields are the `st_*` or `pt_*` id and the `obchars` index the handler loads. |
+| Kind checkboxes | A Magician filter is an `obchars` index or a movement class. |
+| Spawn-tile buttons | Heart, coin, spider, bat, and rat are Robin blockrous tiles. Magician spider (28), rat (30), and werebat (21) are `obchars` types. |
 
 ## PROBS editor (#21)
 
