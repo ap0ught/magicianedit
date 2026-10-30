@@ -10,13 +10,15 @@ Browser-based map / object editor for **Super Robin Hood** (NES, Codemasters, ma
 
 RobinEdit does **not** ship Super Robin Hood ROMs. You need a mapper-71 Super Robin Hood `.nes` dump (the common Asia/En unlicensed cart works; rebuilt/reassembled images with the same layout also work).
 
+**Full details** (sizes, CRC/SHA, iNES header, Asia vs rebuild, licensing): [`docs/ROMS.md`](docs/ROMS.md).
+
 Ways to open a cart:
 
 1. **Drop** a `.nes` file onto the editor window, or use **Open**.
-2. Put mapper-71 carts in project-root **`roms/`** (gitignored `*.nes`; keep `.gitkeep`). Dev lists them via `GET /api/roms` and serves `/roms/<file>`; production builds copy into `dist/roms/` plus `manifest.json`. The empty screen shows those files for one-click load.
+2. Put mapper-71 carts in project-root **`roms/`** (gitignored `*.nes`; keep `.gitkeep`). Dev lists them via `GET /api/roms` and serves `/roms/<file>`; production builds copy into `dist/roms/` plus `manifest.json`. The empty screen shows those files for one-click load — if the list is empty, place `asia.nes` / `srh-rebuilt.nes` (or any mapper-71 dump) in `roms/` and refresh.
 3. Optional legacy samples: `public/asia.nes` and/or `public/rebuilt.nes` (gitignored) still appear as quick-load buttons when present.
 
-A rebuilt image (`srh-rebuilt.nes`) is available from [SuperRobinHoodNESSource Releases](https://github.com/ap0ught/SuperRobinHoodNESSource/releases/latest) — download the release asset into `roms/` (do not commit the dump). See also [`prerelease.nes`](https://github.com/ap0ught/SuperRobinHood/tree/master/roms) in the rebuild repo.
+A rebuilt image (`srh-rebuilt.nes`) is available from [SuperRobinHoodNESSource Releases](https://github.com/ap0ught/SuperRobinHoodNESSource/releases/latest) — download the release asset into `roms/` (do not commit the dump). See also [`prerelease.nes`](https://github.com/ap0ught/SuperRobinHood/tree/master/roms) in the sibling rebuild repo (**different** bytes from `srh-rebuilt.nes`).
 
 `make check` expects `public/*.nes` sample files and asserts map widths, PP1 tiles, exits, pickups, and object insert/delete.
 

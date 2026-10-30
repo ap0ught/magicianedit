@@ -11,6 +11,10 @@ Guidance for assistants working on **RobinEdit** (Vite + React + TypeScript edit
 - Prefer **change-timeline review before Save** when the UI offers it.
 - Validate with `npx tsc --noEmit` and `make check` when sample ROMs exist under `public/`.
 
+## ROMs (Asia vs rebuild)
+
+Mapper-71 Asia dump vs `srh-rebuilt.nes`: sizes, CRC/SHA, iNES header, how the rebuild is built, selftest ink notes, licensing — **[`docs/ROMS.md`](docs/ROMS.md)**. Either image works (signature-scanned tables). Do not hard-code Asia file offsets.
+
 ## Journals
 
 Session notes for the port and ROM layouts the editor depends on (`mapinfo`, exits, `blockrous` / ONSCREEN, objects / keys / secrets, CHR / `mapchrsdefs`, `coinco`, play-from-map, Robin stats):

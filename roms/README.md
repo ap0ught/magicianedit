@@ -1,8 +1,10 @@
 # Local ROMs
 
-Drop mapper-71 **Super Robin Hood** `.nes` carts here. RobinEdit lists them on the empty/start screen for one-click open.
+Drop mapper-71 **Super Robin Hood** `.nes` carts here. RobinEdit lists them on the empty/start screen for one-click open. If that list is empty, add a dump here and refresh the page.
 
-A rebuilt cart (`srh-rebuilt.nes`) is published on [SuperRobinHoodNESSource Releases](https://github.com/ap0ught/SuperRobinHoodNESSource/releases/latest) — download the release asset, then place the file in this folder. Prefer that over any raw blob URL. The byte-identical rebuild project also ships [`prerelease.nes`](https://github.com/ap0ught/SuperRobinHood/tree/master/roms).
+Typical names: `asia.nes` (commercial Asia/En dump) or `srh-rebuilt.nes` / `rebuilt.nes` (PDS rebuild). Fingerprints, header, and which to use: **[`docs/ROMS.md`](../docs/ROMS.md)**.
+
+A rebuilt cart (`srh-rebuilt.nes`) is published on [SuperRobinHoodNESSource Releases](https://github.com/ap0ught/SuperRobinHoodNESSource/releases/latest) — download the release asset, then place the file in this folder. Prefer that over any raw blob URL. The sibling project also ships [`prerelease.nes`](https://github.com/ap0ught/SuperRobinHood/tree/master/roms) (not the same bytes as `srh-rebuilt.nes`).
 
 - Dev: served as `/roms/<name>.nes`, listed by `GET /api/roms`.
 - Production build: copies present `.nes` files into `dist/roms/` and writes `manifest.json`.

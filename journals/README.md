@@ -4,6 +4,8 @@ Session notes for the React RobinEdit port and the Asia-style Super Robin Hood R
 
 These entries were copied from [ap0ught/SuperRobinHoodNESSource](https://github.com/ap0ught/SuperRobinHoodNESSource) (`journal/`). That parent repo still holds the full game source, PDS tree, assembler notes, and non-editor journals (`01`–`03`).
 
+Asia dump vs `srh-rebuilt.nes` (hashes, header, which to use): **[`docs/ROMS.md`](../docs/ROMS.md)**.
+
 | File | Topic |
 |------|--------|
 | [04-robinedit-react.md](04-robinedit-react.md) | Port overview: EXE → React, ROM map/object layout, feature parity |
