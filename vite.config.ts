@@ -12,8 +12,8 @@ export default defineConfig({
   server: { fs: { allow: [here] } },
   define: {
     __SAMPLE_ROMS__: JSON.stringify([
-      { label: "Asia cart", file: "/asia.nes" },
-      { label: "Rebuilt ROM", file: "/rebuilt.nes" },
+      { label: "Inherited mapper 71", file: "/asia.nes" },
+      { label: "Inherited rebuild", file: "/rebuilt.nes" },
     ]),
   },
 });

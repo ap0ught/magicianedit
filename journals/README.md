@@ -2,7 +2,7 @@
 
 Session notes copied with the RobinEdit shell for Super Robin Hood (mapper 71). They remain useful while Magician I/O is incomplete, but **MagicianEdit port research lives in [`../journal/`](../journal/)**.
 
-Asia dump vs `srh-rebuilt.nes` (Robin): see old [`docs/ROMS.md`](../docs/ROMS.md) until rewritten for Magician (issue #3 / [`journal/10-scaffold-dump-policy.md`](../journal/10-scaffold-dump-policy.md)).
+Robin Asia vs rebuild fingerprints now live in [SuperRobinHoodNESSource `docs/ROMS.md`](https://github.com/ap0ught/SuperRobinHoodNESSource/blob/master/docs/ROMS.md). This repo’s [`docs/ROMS.md`](../docs/ROMS.md) is the Magician dump policy.
 
 | File | Topic |
 |------|--------|
@@ -13,4 +13,4 @@ Asia dump vs `srh-rebuilt.nes` (Robin): see old [`docs/ROMS.md`](../docs/ROMS.md
 | [08-castle-map-numbering.md](08-castle-map-numbering.md) | Map N vs geographic castle overview (`mapheights` + world X) |
 | [09-robin-settings-cheatlives.md](09-robin-settings-cheatlives.md) | Robin stats / cheatLives: cart vs dizzy9 vs `patchRobin` |
 
-Agent entry: [`AGENTS.md`](../AGENTS.md) (still Robin-branded until issue #2) and [`../journal/README.md`](../journal/README.md).
+Agent entry: [`AGENTS.md`](../AGENTS.md) and [`../journal/README.md`](../journal/README.md).

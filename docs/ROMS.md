@@ -1,103 +1,61 @@
-# Super Robin Hood ROMs used by RobinEdit
+# Magician dumps used by MagicianEdit
 
-RobinEdit edits **mapper 71** Super Robin Hood carts in place. It does **not** ship `.nes` files (they are gitignored). You supply a dump under project-root `roms/`, via drag/Open, or optional local samples `public/asia.nes` / `public/rebuilt.nes`.
+MagicianEdit does **not** ship `.nes` files. They are gitignored (`*.nes`, `public/*.nes`, `roms/*.nes`). You supply a dump you are allowed to use. Place it under project-root `roms/` (dev list and one-click open) or, for local `make check` samples only, under `public/`.
 
-Two stock images matter for development and `make check`. Both are **65 552** bytes (16-byte iNES header + **64 KiB PRG**, **CHR-RAM**). Both use the same iNES / NES 2.0 header shape: **mapper 71**, vertical mirroring, 4×16 KiB PRG banks, 0 CHR-ROM banks.
+**Do not commit carts or secrets.**
 
-| Role | Local names (not committed here) | Typical source |
-|------|----------------------------------|----------------|
-| Commercial Asia dump | `asia.nes`, `Super Robin Hood (Asia) (En) (Unl).nes` | User-supplied dump; also kept as `vendor/…` in [SuperRobinHoodNESSource](https://github.com/ap0ught/SuperRobinHoodNESSource) |
-| PDS rebuild | `rebuilt.nes`, `srh-rebuilt.nes` | Assembled from `pds_src` via `asm/build_srh.py`; prefer the [Releases](https://github.com/ap0ught/SuperRobinHoodNESSource/releases/latest) asset |
+Magician ROM **parsing is not implemented** in this tree yet. The notes below are the dump policy the editor will pin to. Until that loader exists, the inherited shell still opens **mapper 71** carts only; a Magician image fails that check on purpose. This document replaces the old Super Robin Hood Asia / rebuild note. Those fingerprints stay in [SuperRobinHoodNESSource `docs/ROMS.md`](https://github.com/ap0ught/SuperRobinHoodNESSource/blob/master/docs/ROMS.md).
 
-Related sibling image (different bytes): [`prerelease.nes`](https://github.com/ap0ught/SuperRobinHood/tree/master/roms) in [ap0ught/SuperRobinHood](https://github.com/ap0ught/SuperRobinHood) — clean rebuild from that repo’s recovered PDS tree; **not** byte-identical to `srh-rebuilt.nes`.
+## What to pin
 
-## Fingerprints (headered `.nes`)
+Research and future load/save pin **Beta 1** first.
 
-Measured on the Asia dump and `srh-rebuilt.nes` copies used with this editor:
+The Eurocom source’s last update is **02/03/90**. That matches the dump dated **1990-03-02**. [magician-nes-re](https://github.com/ap0ught/magician-nes-re) sets `DEFAULT_CART = "beta1"` in `asm/patches.py` for that reason. The 1991 USA release is a later cart: different body, battery bit set, different vectors, and different spell names / RAM addresses (`README.md`, `tools/spelltab.py` in that repo).
 
-| Image | Size | CRC-32 | SHA-256 |
-|-------|------|--------|---------|
-| Asia (`…(Asia) (En) (Unl).nes` / `asia.nes`) | 65552 | `D9114282` | `ae6c7a412732cba05490a4d355b7a619e201583b7f5b99d0148d888293a88076` |
-| Rebuild (`srh-rebuilt.nes` / `rebuilt.nes`) | 65552 | `C0E5DBCD` | `0d87e02ab4b0a89d9510feddde32ba8615b165ad429582657347e2f8d8d4998e` |
-| SuperRobinHood `prerelease.nes` (related) | 65552 | `44F27107` | `c9882d5415788bc144b7669d27a3ffe42275ab0d1f9aa671d069169dec690582` |
+Registry and on-disk checks live in magician-nes-re:
 
-### iNES header (Asia and `srh-rebuilt` share these 16 bytes)
+- `asm/patches.py` — `CARTS` (file name, body SHA1, whole-file SHA1, battery flag, vectors)
+- `tools/carts.py` — checks magic, sizes, both SHA1s, header byte 6 battery bit, and NMI / RESET / IRQ
 
-```
-4E 45 53 1A  04 00 71 48  00 00 00 07  02 00 00 01
-```
+Body SHA1 is the header-stripped digest. Whole-file SHA1 (`sha1_full` in the registry) is what BizHawk’s `MAGICIAN_EXPECT_SHA1` uses. Do not treat two dumps as the same cart because the 16-byte header matches.
 
-- Magic `NES<EOF>`
-- PRG ROM size = **4** × 16 KiB = **64 KiB**
-- CHR ROM size = **0** → **CHR-RAM**
-- Mapper **71** (Camerica / Codemasters-style), vertical nametable mirroring
-- NES 2.0–style trailer bytes matching the Asia dump (not a plain iNES 1.0 zero pad)
+## Image shape
 
-## How each image is produced
+Every dump in the registry is **262160** bytes: 16-byte iNES header + **128 KiB PRG** + **128 KiB CHR**. magician-nes-re documents them as mapper **4 (MMC3)**, horizontal mirroring. PRG count in the header is 8 × 16 KiB; CHR count is 16 × 8 KiB.
 
-### Asia dump
+The battery bit is header byte 6, bit 1 (`data[6] & 0x02`), not a guess from the filename. **Beta 1 is the dump with that bit clear** (recorded header byte 6 `$40`). The USA release is recorded as `$42` (bit set). A tool that assumes every Magician cart has battery-backed PRG RAM is wrong for Beta 1.
 
-Commercial **Asia / English / unlicensed** cartridge dump, commonly titled:
+Vectors below are NMI / RESET / IRQ as stored in the registry (RESET is the middle address).
 
-`Super Robin Hood (Asia) (En) (Unl).nes`
+## Registry
 
-It is **not** built from this repo. Obtain a dump you are allowed to use. In SuperRobinHoodNESSource the verified copy lives under `vendor/` (and may appear as a root-level duplicate). For RobinEdit, copy it to `roms/` or `public/asia.nes`.
+Copied from `asm/patches.py` `CARTS`. Re-check with `tools/carts.py` before treating a local file as one of these.
 
-### `srh-rebuilt.nes` / `rebuilt.nes`
+| Key | Typical file | Body SHA1 (header stripped) | Battery | Vectors NMI / RESET / IRQ |
+|-----|----------------|------------------------------|---------|----------------------------|
+| **`beta1` (pin first)** | `Magician (USA) (Beta 1) (1990-03-02).nes` | `af51e12dbcd6acbdc914f0c63ed67d79165ce304` | **CLEAR** | `$F917` / `$F930` / `$F922` |
+| `beta2` | `Magician (USA) (Beta 2).nes` | `e8d8e26ced71709f6a5d3cb5147174dfe50971cf` | SET | `$FA05` / `$FA1B` / `$FA0D` |
+| `beta3` | `Magician (USA) (Beta 3).nes` | `2a0a444dae8b5b02f4e5f1b789e16356f3ab08f0` | SET | `$F96E` / `$F984` / `$F976` |
+| `beta` | `Magician (USA) (Beta).nes` | `2a0a444dae8b5b02f4e5f1b789e16356f3ab08f0` | SET | `$F96E` / `$F984` / `$F976` |
+| `beta4` | `Magician (USA) (Beta 4).nes` | `80c7ffa9bddf50fafd39afc5c4f49d4a9486ba7d` | SET | `$F9AB` / `$F9C1` / `$F9B3` |
+| `release` | `Magician (USA).nes` | `bd806d7f7c318b8012433250ca10aa8387a962bb` | SET (`$42`) | `$F9AB` / `$F9C1` / `$F9B3` |
 
-Produced in [SuperRobinHoodNESSource](https://github.com/ap0ught/SuperRobinHoodNESSource) by assembling the official PDS tree:
+`beta3` and `beta` share a body. `beta4` shares the release’s vectors and does **not** share its body. Beta 2’s vectors sit on a different branch from both Beta 1 and the release.
 
-```bash
-python3 asm/build_srh.py
-# → srh-rebuilt.nes at repo root (INES_HEADER + 64 KiB placed PRG)
-```
+## Where files live
 
-`asm/build_srh.py` runs `pds_src/src/ROBIN.PRJ` through `asm/pds6502.py`, places mapper-71 banks (switchable `$8000` bank + fixed `$C000`), and writes the same 16-byte header as the Asia cart. Details and remaining cart mismatches: parent journals [`01`](https://github.com/ap0ught/SuperRobinHoodNESSource/blob/master/journal/01-pds-build-attempt.md)–[`03`](https://github.com/ap0ught/SuperRobinHoodNESSource/blob/master/journal/03-cart-differences.md).
-
-Download from [SuperRobinHoodNESSource Releases](https://github.com/ap0ught/SuperRobinHoodNESSource/releases/latest) (or build locally) into RobinEdit as `roms/srh-rebuilt.nes` or `public/rebuilt.nes`.
-
-## Asia vs rebuild — what the editor cares about
-
-Same-offset byte match is only ~**40%**: one inserted/removed opcode shifts every later address. Known assembler/cart gaps (palette black `$0E` vs `$0D`, zero-page vs absolute, `add16toval` of negatives, one `flybackvar` branch, Taiwan lock / logo order) are documented in parent [`journal/03-cart-differences.md`](https://github.com/ap0ught/SuperRobinHoodNESSource/blob/master/journal/03-cart-differences.md). **Nothing there blocks RobinEdit.**
-
-RobinEdit finds `mapinfo`, block/solid/`mapchrsdefs`, CHR tables, and object lists by **PRG signature**, not hard-coded Asia file offsets, so both images load. Play-from-map patches also use opcode signatures for the same reason.
-
-`make check` / `src/selftest.ts` exercises both `public/asia.nes` and `public/rebuilt.nes` when present:
-
-| Check | Asia | Rebuild |
-|-------|------|---------|
-| Map count / widths | 13 maps, same width list | same |
-| Object counts per map | `14,8,4,11,29,23,18,31,5,5,4,3,2` | same |
-| Map-4 overview “ink” (non-zero RGB pixels after render) | ~**277 673** | ~**745 472** |
-| Ink threshold | must be ≥ 1000 (both pass) | same |
-| PP1 rock/sky tile probes, exits, pickups, insert/delete | ok | ok |
-
-Higher rebuild ink is expected (different CHR / code layout still yields a full painted map); a near-zero ink value would mean a blank/broken render.
-
-## Which ROM to use with RobinEdit
-
-| Goal | Prefer |
-|------|--------|
-| Match the common dumped cart / dizzy9’s Asia-oriented tool | **Asia** dump |
-| Work from assembled PDS source / iterate after `build_srh.py` | **`srh-rebuilt.nes`** |
-| Empty-screen one-click list | Drop either (or both) into **`roms/`** |
-| Local `make check` | Optional copies as `public/asia.nes` and `public/rebuilt.nes` |
-
-Either image is fine for day-to-day editing. Keep commercial dumps **out of git** in this repo (`*.nes`, `public/*.nes`, `roms/*.nes` are ignored).
-
-## Licensing / copyright caution
-
-- The **commercial ROM** and its assets remain third-party IP (Codemasters / Camerica / related). Obtain a dump you are allowed to use; do **not** commit or redistribute `.nes` binaries from this repository.
-- The **PDS source** rebuild path is tied to the published Codemasters / Wireframe source recovery story; see SuperRobinHoodNESSource and [ap0ught/SuperRobinHood](https://github.com/ap0ught/SuperRobinHood) for how those trees attribute Wireframe / Oliver Twins material. Rebuilt binaries are still game code — treat redistribution carefully.
-- RobinEdit’s React source is separate from cart IP; see the root README credits.
-
-## Where files live across repos
-
-| Path | Repo |
+| Path | Role |
 |------|------|
-| `vendor/Super Robin Hood (Asia) (En) (Unl).nes` | SuperRobinHoodNESSource |
-| `srh-rebuilt.nes` (build output; may be published there) | SuperRobinHoodNESSource |
-| `roms/prerelease.nes` | ap0ught/SuperRobinHood |
-| `roms/*.nes`, `public/asia.nes`, `public/rebuilt.nes` | Local only in **robinedit** (gitignored) |
+| `roms/*.nes` | Local dumps. Gitignored. Dev server lists them (`GET /api/roms`, `/roms/<name>`). |
+| `public/*.nes` | Optional local samples for `make check`. Gitignored. Not the Magician pin. |
+| magician-nes-re cart dir | Whatever `asm/patches.py` `CART_DIR` points at on that machine. Not this repo. |
 
-Parent mirror of this note: [SuperRobinHoodNESSource `docs/ROMS.md`](https://github.com/ap0ught/SuperRobinHoodNESSource/blob/master/docs/ROMS.md).
+A production build copies whatever `.nes` files are present in `roms/` into `dist/roms/`. That output is local. Do not publish carts from CI.
+
+## Inherited shell (until Magician I/O)
+
+`make check` still looks for `public/asia.nes` and `public/rebuilt.nes`. Those are mapper 71 Super Robin Hood images for the inherited editor, not Magician dumps. Opening a Magician cart in the current UI hits the mapper 71 guard in `src/rom.ts`. Leave that guard in place until a Magician loader exists.
+
+## Licensing
+
+Magician cartridge dumps and assets are third-party IP (Taxan / Eurocom). Obtain a dump you are allowed to use. The Chris Shrigley / Eurocom educational source package is a separate tree in magician-nes-re (`vendor/Magician-NES/`). Neither belongs in this repo as a `.nes` file.

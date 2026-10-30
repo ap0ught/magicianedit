@@ -1,4 +1,4 @@
-# RobinEdit — local Vite server
+# MagicianEdit — local Vite server
 # Usage:
 #   make          # install deps if needed, then start http://127.0.0.1:5173/
 #   make start    # same as default
@@ -29,7 +29,7 @@ install:
 	$(NPM) install
 
 start: node_modules/.package-lock.json
-	@echo "RobinEdit → http://$(HOST):$(PORT)/"
+	@echo "MagicianEdit → http://$(HOST):$(PORT)/"
 	$(NPM) run dev -- --host $(HOST) --port $(PORT)
 
 check: node_modules/.package-lock.json

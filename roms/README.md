@@ -1,11 +1,10 @@
 # Local ROMs
 
-Drop mapper-71 **Super Robin Hood** `.nes` carts here. RobinEdit lists them on the empty/start screen for one-click open. If that list is empty, add a dump here and refresh the page.
+Drop `.nes` carts here for the empty-screen list. **Do not commit them** — `roms/*.nes` is gitignored. Keep this folder (and `.gitkeep`) in git.
 
-Typical names: `asia.nes` (commercial Asia/En dump) or `srh-rebuilt.nes` / `rebuilt.nes` (PDS rebuild). Fingerprints, header, and which to use: **[`docs/ROMS.md`](../docs/ROMS.md)**.
+Magician dump policy (Beta 1 first, no committed carts): **[`docs/ROMS.md`](../docs/ROMS.md)**.
 
-A rebuilt cart (`srh-rebuilt.nes`) is published on [SuperRobinHoodNESSource Releases](https://github.com/ap0ught/SuperRobinHoodNESSource/releases/latest) — download the release asset, then place the file in this folder. Prefer that over any raw blob URL. The sibling project also ships [`prerelease.nes`](https://github.com/ap0ught/SuperRobinHood/tree/master/roms) (not the same bytes as `srh-rebuilt.nes`).
+Until Magician load/save lands, the inherited shell only opens mapper 71 carts. A Magician image in this folder will show up in the list and then fail that guard.
 
 - Dev: served as `/roms/<name>.nes`, listed by `GET /api/roms`.
-- Production build: copies present `.nes` files into `dist/roms/` and writes `manifest.json`.
-- **Do not commit** `.nes` dumps — `roms/*.nes` is gitignored. Keep this folder (and `.gitkeep`) in git.
+- Production build: copies present `.nes` files into `dist/roms/` and writes `manifest.json`. That output stays local.

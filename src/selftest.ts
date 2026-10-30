@@ -25,7 +25,7 @@ for (const rel of carts) {
   try {
     bytes = new Uint8Array(readFileSync(file));
   } catch {
-    console.error(`SKIP ${rel} (place a mapper-71 Super Robin Hood dump at ${rel})`);
+    console.error(`SKIP ${rel} (inherited shell: place a mapper 71 cart at ${rel})`);
     failed++;
     continue;
   }

@@ -54,7 +54,7 @@ import { ChrSetPanel, PaletteModule, TilePanel } from "./TileChrome.tsx";
 
 type Mode = "bg" | "obj" | "castle" | "robin";
 
-/** Main RobinEdit shell — ROM load, undo/redo, level stage, and side panels. */
+/** Main MagicianEdit shell — ROM load, undo/redo, level stage, and side panels. Logic stays the inherited Robin editor until Magician load lands. */
 export function App() {
   const fileRef = useRef<HTMLInputElement>(null);
   const stacks = useRef<{ undo: Edit[][]; redo: Edit[][] }>({ undo: [], redo: [] });
@@ -350,8 +350,8 @@ export function App() {
     >
       <header className="bar">
         <div className="brand">
-          <strong>Super Robin Hood Editor</strong>
-          <span>0.4.4</span>
+          <strong>MagicianEdit</strong>
+          <span>0.1.0</span>
         </div>
         <button onClick={() => fileRef.current?.click()}>Open</button>
         <button disabled={!doc} onClick={() => requestSave(false)} title="Review changes, then save">
