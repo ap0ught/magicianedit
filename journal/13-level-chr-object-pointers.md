@@ -26,7 +26,7 @@ Play-from-map (#24): **do not** patch Robin `startlevel` / `mapno` `$42`. Prefer
 2. Derive palette pointer into `chrpals` and `jsr movepal`.
 3. Bank `mapbnk70`, read BE width/height from `.MAP` at `bmbase`, set `xsize`/`ysize`/`hxsize`, advance base +4.
 
-CHR page installs: `setchr` / `setspr` (X7). The descriptor’s third byte is the MMC3 CHR bank (`s00` = 0, `s01` = 4, … in `x0.pds`), i.e. which 4 KiB page from journal 11.
+CHR page installs: `setchr` / `setspr` (X7). The descriptor’s third byte is the MMC3 CHR bank (`s00` = 0, `s01` = 4, … in `x0.pds`), i.e. which 4 KiB page from journal 11. `setchr` stores Y in `mapbnk0`. `setspr` is the sprite-side install: Y is the first MMC3 sprite bank, written as Y through Y+3 into `r2`–`r5`, and A/X is the sprite palette pointer.
 
 ### Descriptor bytes (`l0` / `l1` in `x0.pds`)
 
@@ -60,8 +60,9 @@ Searched the headered dumps. Same 16-byte town signature, different places. **66
 | `pth` | immediately after `ptl` | `$F63D` | | |
 | `actob` | `$EB8F` (slot 15) | `$1EB9F` | routine bytes differ (`obtyp` is not `$04F4`) | |
 | `setchr` | `$F52F` (slot 15) | `$1F53F` | not the same byte sequence | |
+| `setspr` | `$F51C` (slot 15) | `$1F52C` | not re-measured | |
 
-`ptl`/`pth` are indexed by `curlevind`. Bank number `bev` is **7** (`bnk 6,#bev` maps that slot at `$8000`). `actob` on Beta 1 begins `A2 03 BC F4 04` (`LDX #3` / `LDY obtyp,X` with `obtyp` = `$04F4`).
+`ptl`/`pth` are indexed by `curlevind`. Bank number `bev` is **7** (`bnk 6,#bev` maps that slot at `$8000`). `actob` on Beta 1 begins `A2 03 BC F4 04` (`LDX #3` / `LDY obtyp,X` with `obtyp` = `$04F4`). `setspr` is the 19 bytes immediately before `setchr` and begins `84 15 84 02 C8 84 03` (`STY t2` / `STY r2` / `INY` / `STY r3`); its last instruction is `D0 08`, a branch into `setchr`’s `movpal` tail. A rebuild whose reset is Beta 1’s `$F930` places that label at `$F51C`, in the same image where `setchr`, `ld10`, `actob`, and `ptl` match the dump rows above.
 
 ## Object runtime (not packed Robin lists)
 
