@@ -1,0 +1,5 @@
+{
+  "name": "olivertwins-RE",
+  "install": "set -euo pipefail\nif [ -f package-lock.json ]; then\n  root=.\nelif [ -f magicianedit/package-lock.json ]; then\n  root=magicianedit\nelif [ -f repos/magicianedit/package-lock.json ]; then\n  root=repos/magicianedit\nelse\n  echo \"package-lock.json not found\" >&2\n  exit 1\nfi\ncd \"$root\"\nnpm ci\n",
+  "start": "set -euo pipefail\nif [ -f package.json ]; then\n  root=.\nelif [ -f magicianedit/package.json ]; then\n  root=magicianedit\nelif [ -f repos/magicianedit/package.json ]; then\n  root=repos/magicianedit\nelse\n  echo \"package.json not found\" >&2\n  exit 1\nfi\ncd \"$root\"\nexec npm run dev -- --host 0.0.0.0 --port 5173\n"
+}
