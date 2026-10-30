@@ -341,6 +341,7 @@ export function App() {
   api.current = { undo, redo, save: () => requestSave(false) };
 
   useEffect(() => {
+    /** Global shortcuts: undo/redo/save, map [,], overlays. */
     function onKey(e: KeyboardEvent) {
       const el = e.target as HTMLElement | null;
       const tag = el?.tagName;
@@ -394,6 +395,7 @@ export function App() {
 
   useEffect(() => {
     if (!dirty) return;
+    /** Warn before closing the tab when the ROM is dirty. */
     const fn = (e: BeforeUnloadEvent) => e.preventDefault();
     window.addEventListener("beforeunload", fn);
     return () => window.removeEventListener("beforeunload", fn);
@@ -1151,6 +1153,7 @@ function SaveReviewModal({
   const keptSteps = steps.filter((s) => kept.has(s.id));
   const byteCount = totalEditBytes(keptSteps);
 
+  /** Include or exclude one timeline step from the save. */
   function toggle(id: string) {
     setKept((prev) => {
       const next = new Set(prev);
@@ -1246,6 +1249,7 @@ function OverviewModal({
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
+    /** Fit and redraw the overview to the scroll viewport. */
     const paint = () => {
       const unit = worldLayout(doc, 1);
       const aw = Math.max(1, scroller.clientWidth);
@@ -1349,6 +1353,7 @@ function Empty({
     refreshRoms();
     const hot = import.meta.hot;
     if (!hot) return;
+    /** HMR hook: refresh the roms/ list when files change. */
     const onChange = () => refreshRoms();
     hot.on("srh:roms-changed", onChange);
     return () => {
