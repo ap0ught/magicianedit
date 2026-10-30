@@ -26,7 +26,42 @@ Play-from-map (#24): **do not** patch Robin `startlevel` / `mapno` `$42`. Prefer
 2. Derive palette pointer into `chrpals` and `jsr movepal`.
 3. Bank `mapbnk70`, read BE width/height from `.MAP` at `bmbase`, set `xsize`/`ysize`/`hxsize`, advance base +4.
 
-Editor must locate `ld10` / level table in the chosen dump (symbol from rebuild `asm/out/mag.sym` when available; else signature search against Beta 1). CHR page installs: `setchr` / `setspr` (X7) — page indices come from those descriptor bytes + DAT `##.CHR`.
+CHR page installs: `setchr` / `setspr` (X7). The descriptor’s third byte is the MMC3 CHR bank (`s00` = 0, `s01` = 4, … in `x0.pds`), i.e. which 4 KiB page from journal 11.
+
+### Descriptor bytes (`l0` / `l1` in `x0.pds`)
+
+`initlev` copies these 16 bytes onto `mapbnk70` (`$65` on Beta 1). `l0` is 9 bytes, `l1` is 7.
+
+| Offset | Lands on | Contents |
+|--------|----------|----------|
+| 0 | `mapbnk70` | PRG bank of `.BLK` + `.MAP` |
+| 1 | `mapbnk71` | PRG bank of `.COL` |
+| 2 | `mapbnk0` | CHR bank (`sNN`) |
+| 3–4 | `xorg` | X block origin (word) |
+| 5 | `yorg` | Y block origin |
+| 6–7 | `xlim` | X size in blocks (word) |
+| 8 | `ylim` | Y size in blocks |
+| 9–10 | `blbase` | CPU pointer to `.BLK` |
+| 11–12 | `bmbase` | CPU pointer to `.MAP` (header included; `initlev` then adds 4) |
+| 13–14 | `cmbase` | CPU pointer to `.COL` |
+| 15 | `xsize` at copy time | Palette index. `initlev` does `chrpals + index*12`, then overwrites `xsize` from the `.MAP` header |
+
+Town (`ld10`, first record) is `08 0B 00 00 00 00 EC 00 0B 00 A0 7C A2 18 B4 00`: bank `$8` / `$B`, CHR 0, origin 0, size 236×11, pointers `$A000` / `$A27C` / `$B418`, palette 0. That matches `10.MAP` / `10.BLK` / `10.COL` and the bank table in journal 11.
+
+### Measured addresses (Beta 1 vs USA release)
+
+Searched the headered dumps. Same 16-byte town signature, different places. **66** records start at `ld10` on both carts (the `ld10`…`lde0` span, including shops and inventory). Do not reuse a Beta 1 file offset on the release.
+
+| Symbol | Beta 1 CPU | Beta 1 file | Release CPU | Release file |
+|--------|------------|-------------|-------------|--------------|
+| `ld10` | `$CF4D` (slot 14, `$C000` window) | `$1CF5D` | `$CADD` | `$1CAED` |
+| `pt10` (first player-trigger record) | `$8E1D` (slot 7 at `$8000`) | `$EE2D` | `$924E` | `$F25E` |
+| `ptl` (56 low bytes, one per `dl` in `PROBDAT.SRC`) | `$95F5` | `$F605` | not re-measured | |
+| `pth` | immediately after `ptl` | `$F63D` | | |
+| `actob` | `$EB8F` (slot 15) | `$1EB9F` | routine bytes differ (`obtyp` is not `$04F4`) | |
+| `setchr` | `$F52F` (slot 15) | `$1F53F` | not the same byte sequence | |
+
+`ptl`/`pth` are indexed by `curlevind`. Bank number `bev` is **7** (`bnk 6,#bev` maps that slot at `$8000`). `actob` on Beta 1 begins `A2 03 BC F4 04` (`LDX #3` / `LDY obtyp,X` with `obtyp` = `$04F4`).
 
 ## Object runtime (not packed Robin lists)
 
@@ -42,7 +77,7 @@ Beta 1 (`src/play/zpmap.txt` / `ram.py`):
 
 ## Player-triggered events
 
-`PROBS.SRC` `plrevents`: bank `bev` (#7), `ptl`/`pth`/`ptbas` indexed by `curlevind`. Each event record **8 bytes** (AABB + type + data); type dispatches via `prvl`/`prvh`. End marker `$81` on first byte (comment says FF — verify against data).
+`PROBS.SRC` `plrevents`: bank `bev` (#7), `ptl`/`pth`/`ptbas` indexed by `curlevind`. Each event record **8 bytes** (AABB + type + data); type dispatches via `prvl`/`prvh`. End marker is `$81` (`e` macro, and `cmp #$81`). The comment above that compare says FF; the byte the code tests is `$81`.
 
 ## Assembler / rebuild entrypoints
 

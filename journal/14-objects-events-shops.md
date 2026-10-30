@@ -4,7 +4,7 @@ Milestone **5**. Magician has **no** Robin coinco treasures/hearts, key LINK/UNL
 
 ## `obchars` type survey (issue #9)
 
-Authoritative labels: trailing comments on `obchars` in `magician-nes/vendor/Magician-NES/MISC.SRC` (order = type index):
+Authoritative labels: trailing comments on `obchars` in `magician-nes/vendor/Magician-NES/MISC.SRC` (order = type index). Checked against that table (types 0–43); the names below match the comments.
 
 | # | Name | # | Name |
 |---|------|---|------|

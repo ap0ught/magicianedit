@@ -4,7 +4,7 @@ Milestone **2** research: asset inventory and banking contrast.
 
 ## DAT level packs (issue #5)
 
-Path: `magician-nes/vendor/Magician-NES/DAT/` (98 files). **17** `.MAP` files totaling **31820** bytes.
+Path: `magician-nes/vendor/Magician-NES/DAT/` (**100** files). **17** `.MAP` files totaling **31820** bytes. Companion sizes below were re-measured from that directory (13 `.BLK`, 18 `.CHR`, 18 `.COL`, 29 `.PAL`, 3 `.DAT`, plus `SPR` and `MUS` with no extension).
 
 Companion pattern (sizes measured locally):
 
@@ -32,14 +32,29 @@ Non-level assets also in DAT: `TIT0/1/2.CHR`, `TIT.DAT`/`PW.DAT`/`PAN.DAT` (scen
 
 ### How packs land in the cart
 
-`magician-nes/pds-text/x7.pds` (disabled `if 0=1` load list, still the layout map) packs BLK+MAP into banks `$8`…`$d` at `$8000`/`$A000`, and COL packs into companion colour banks. Runtime: `mapbnk70` / `mapbnk71` (see `initlev` in `pds-text/x1.pds`). Editor may load vendor DAT for authoring **or** carve PRG regions once pointers are known (journal 13).
+`pds-text/x7.pds` keeps a `load` list inside `if 0=1` (not assembled). The `else` branch is the layout the source actually uses: 8 KiB PRG bank number plus a CPU address in the `$A000` window. File offset on an iNES image is `16 + bank*8192 + (cpu - $A000)`.
+
+Every file in this table matches **Beta 1** at that offset (full-file compare, 47 packs). The USA release does **not**: slot 8 there begins `4A 4A 4A 4A …`, while `10.BLK` and Beta 1 begin `4C 4C 4C 4C …`. Do not reuse these offsets on the release.
+
+| Bank | CPU `$A000` window | Files |
+|------|--------------------|-------|
+| `$8` | `$A000` `10.BLK`, `$A27C` `10.MAP`, `$ACA4` `20.BLK`, `$B04C` `20.MAP`, `$BB50` `21.COL`, `$BBC8` `73.COL`, `$BCE8` `80.BLK`, `$BDFC` `80.MAP`, `$BF60` `80.COL` | town, wilderness, well colour, castle-sub colour, final battle |
+| `$9` | `$A000` `50.BLK`, `$A26C` `50.MAP`, `$A3D0` `51.MAP`, `$A754` `51.COL`, `$A84C` `52.MAP`, `$AF30` `53.BLK`, `$B1D4` `53.MAP` | caverns; 51/52 share `50.BLK` |
+| `$A` | `$A000` `40.BLK`, `$A37C` `40.MAP`, `$B140` `IN.BLK`, `$B520` `IN.MAP`, `$B734` `IN.COL`, `$B7C4` `SH.BLK`, `$B9DC` `SH.MAP`, `$BEB0` `SH.COL` | forest, interior, shop |
+| `$B` | `$A000` `30.BLK`, `$A294` `30.MAP`, `$B058` `30.COL`, `$B418` `10.COL`, `$B6DC` `20.COL`, `$BA5C` `40.COL`, `$BE1C` `50.COL` | lake plus town/wilderness/forest/cavern colours |
+| `$C` | `$A000` `21.BLK`, `$A0A0` `21.MAP`, `$A254` `52.COL`, `$A434` `53.COL`, `$A7F4` `60.BLK`, `$A934` `60.MAP`, `$B514` `60.COL`, `$B850` `70.COL`, `$BAE4` `71.COL`, `$BD78` `72.COL` | well, maze colour, dungeon, castle colours |
+| `$D` | `$A000` `70.BLK`, `$A270` `70.MAP`, `$ABE8` `71.MAP`, `$B560` `72.MAP`, `$BA74` `73.BLK`, `$BBDC` `73.MAP` | castle passages; 71/72 share `70.BLK` |
+
+`51`, `52`, `71`, and `72` have no own `.BLK` / `.CHR`. Their descriptors point at another id’s block bank (journal 13).
+
+CHR is not in these PRG banks. `asm/build.py` `CHR_SEND_ORDER` places 4 KiB pages in the 128 KiB CHR ROM. `10.CHR` is the first page (file offset `16+131072`) and matches Beta 1; `20.CHR` matches the next 4096 bytes. Descriptor field `sNN` (`x0.pds`) is `N*4`, the MMC3 1 KiB bank number for that page. Runtime `mapbnk70` / `mapbnk71` select the PRG banks above (`initlev` in `x1.pds`). An editor can load vendor DAT directly, or slice these Beta 1 offsets. Release slices are a different measurement.
 
 ## MMC3 PRG/CHR banking (issue #6)
 
 Magician (from magician-nes `README.md` / `GAPMAP.md` / `asm/build.py`):
 
-- Mapper **4**, 16 × **8 KiB** PRG slots; CHR **128 KiB** (4 KiB pages).
-- MMC3 windows (X5.PDS notes): `$8000`=reg6, `$A000`=reg7, fixed `$C000`=slot 14, `$E000`=slot 15.
+- Mapper **4**, 16 × **8 KiB** PRG slots; CHR **128 KiB** (4 KiB pages). Slot `N` is file offset `16 + N*8192` in the PRG. Beta 1 slot `$8` is `10.BLK` (see the table above).
+- MMC3 windows (`GAPMAP.md`, X5 notes): `$8000`=reg6, `$A000`=reg7, fixed `$C000`=slot 14, `$E000`=slot 15. The pack pointers above are addresses in the `$A000` window, so the matching slot is mapped through reg7.
 - Modules: `X0`…`X7.PDS` + `SEQ.SRC`; X5/X6/X7 compete for slot 15; X6 forced origin `$E605` (`MODULE_ORIGINS`) so `reset` → `initcols` at `$EEC7` hits fixed `$E000`.
 - Beta 1 vectors in slot 15: reset `$F930`, X7 anchor `$F0D5`.
 
@@ -56,7 +71,7 @@ Deliverable for #6 is this note + links to `magician-nes/GAPMAP.md` and Robin `r
 `magicianedit/src/rom.ts` today:
 
 ```ts
-if (mapper !== 71) throw new Error(`RobinEdit edits the mapper 71 cart…`);
+if (mapper !== 71) throw new Error(`MagicianEdit does not load this cart yet. The inherited shell edits mapper 71; this ROM is mapper ${mapper}.`);
 ```
 
 Magician accept path should require approximately:

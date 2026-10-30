@@ -6,7 +6,7 @@ Local sources: `magician-nes/vendor/Magician-NES/DAT/`, load/size code in `magic
 
 ## `.MAP` — block index grid
 
-Measured against every vendor `*.MAP`: header is **two big-endian 16-bit sizes** (Atari ST endian), then a raw `width × height` array of **block indices**.
+Measured against every vendor `*.MAP`: header is **two big-endian 16-bit sizes** (Atari ST endian), then a `width × height` array of **swizzled block indices** (one byte each). They are not plain `0..N` indices.
 
 `initlev` (`pds-text/x1.pds`) confirms the swap:
 
@@ -18,6 +18,21 @@ sta xsize+1
 ```
 
 After reading sizes, runtime advances `bmbase` by **+4** and treats the rest as the block map.
+
+`x1.pds` does not multiply the map byte by 4. It builds the `.BLK` pointer as:
+
+```
+ptr = blbase + (byte & $FC) + ((byte & 3) << 8)
+```
+
+That is `blbase + index*4` when the byte stores the index swizzled:
+
+```
+index = ((byte & $FC) >> 2) | ((byte & 3) << 6)
+byte  = ((index & $3F) << 2) | (index >> 6)
+```
+
+Checked on `10.MAP`: decoded indices are `0..158` and every one lands inside `10.BLK` (159 metatiles). Reading the same bytes as plain indices runs off the end of the file 620 times. The editor document should store the decoded index and swizzle again on save.
 
 Examples (local DAT):
 
@@ -34,25 +49,41 @@ Examples (local DAT):
 Editor document model sketch:
 
 - `width`, `height` (blocks)
-- `blocks: Uint8Array` length `w*h` (index into `.BLK`)
+- `blocks`: decoded metatile index per cell (`w*h`), not the raw map byte
 - orientation from aspect / level descriptor
 - optional companion `.COL` colour/attr map (see below)
 
 ## `.BLK` — metatile → 4 CHR tiles
 
-Sizes are multiples of **4** (e.g. `10.BLK` 636 → 159 metatiles). Each metatile is four tile indices (NES pattern tiles), analogous in *role* to Robin metatiles but **not** PP1-packed.
+Sizes are multiples of **4** (e.g. `10.BLK` 636 → 159 metatiles). Metatile `index` is the four bytes at `index*4`. `x1.pds` reads them with `Y = blokx` (0 left, 1 right) and `Y = blokx | 2` (the comment there calls that the bottom row). So bytes 0–1 are the top row and bytes 2–3 are the bottom row. Same role as a Robin metatile, **not** PP1-packed.
 
-Head of `10.BLK`: `4c 4c 4c 4c d1 d2 d3 d4 …` — four identical `$4C` then a distinct quad.
+Head of `10.BLK`: `4c 4c 4c 4c d1 d2 d3 d4 …` — four identical `$4C` then a distinct quad. That head is also the first eight bytes of Beta 1 PRG slot `$8`.
 
 Paint/eyedrop (#15) should edit MAP block indices (and optionally BLK definitions later); stage render (#14) expands MAP→BLK→CHR tiles.
 
 ## `.COL` — colour / attribute companion
 
-Loaded into a separate MMC3 bank window (`mapbnk71` / `doatrx`/`doatry` in `x1.pds`). Colour map addressing uses `hxsize` (half x size) and 8-column attribute-style scrolling — **not** the same layout as the block map byte-for-byte.
+Loaded into a separate MMC3 bank window (`mapbnk71` / `doatrx`/`doatry` in `x1.pds`, pointer `cmbase`). Colour map addressing uses `hxsize` (half x size) and 8-column attribute-style scrolling — **not** the same layout as the block map byte-for-byte, and **not** the collision plane.
 
 Examples: `10.COL` 708 B, `20.COL` 896 B, `SH.COL` 336 B. Some level ids have MAP+COL only (51/52/71/72) and reuse another id’s BLK/CHR.
 
-Collision overlay (#17): solid flags may live in block properties / separate tables — do not assume Robin “solid from PP1 plane” rules. Re-read collision entry points in magician-nes journals (`18-draw-layer-scaffold.md`) before inventing flags.
+Walk flags are per pattern tile, in the `ct*` nibble tables in `MISC.SRC` (one nibble per CHR tile, selected with the level’s CHR set):
+
+| nibble | meaning |
+|--------|---------|
+| 0 | thin air |
+| 1 | land / platform that cannot be levitated through |
+| 2 | wall / ceiling |
+| 3 | castle floor |
+| 4 | castle ceiling |
+| 5 | marsh |
+| 6 | fountain |
+| 7 | water (dead) |
+| 8 | fire pit (dead) |
+| 9 | ceiling spikes (dead) |
+| A | caverns weak floor |
+
+Do not invent Robin “solid from the PP1 plane” rules, and do not treat a `.COL` byte as one of these nibbles.
 
 ## `.PAL` — 12-byte background packs
 
@@ -75,7 +106,7 @@ Level CHR files are **4096** bytes (one 4 KiB MMC3 CHR page). Title uses `TIT0.C
 | Concern | RobinEdit | Magician |
 |---------|-----------|----------|
 | Level directory | 13×6-byte `mapinfo` scan | 16-byte descriptors from `ld10` × `curlevind` |
-| Geometry | Fixed 14 rows, variable columns | BE w×h block grid |
+| Geometry | Fixed 14 rows, variable columns | BE w×h grid; map byte is a swizzled metatile index |
 | Metatile unpack | PP1 (`pp1.ts`) | `.BLK` quads |
 | CHR | CHR-RAM packs / `mapchrsdefs` | CHR-ROM 4 KiB pages |
 | Castle overview | `overview.ts` / MAPSCROL | Retire or replace (#18) |
