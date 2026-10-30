@@ -119,7 +119,6 @@ export function spawnTiles(
 }
 
 /** Spawn-pad kind for a metatile id, or null if it is not a special pad. */
-/** Spawn-pad kind for a metatile id, or null if it is not a special pad. */
 export function spawnTileOf(
   blockrous: Uint8Array | null | undefined,
   tileId: number,
@@ -129,7 +128,6 @@ export function spawnTileOf(
   return kind && SPAWN_TILES.has(kind) ? (kind as SpawnTileKind) : null;
 }
 
-/** Full UI label for a spawn-pad kind (e.g. "Spider"). */
 /** Full UI label for a spawn-pad kind (e.g. "Spider"). */
 export function spawnTileLabel(kind: SpawnTileKind): string {
   switch (kind) {
@@ -147,7 +145,6 @@ export function spawnTileLabel(kind: SpawnTileKind): string {
 }
 
 /** Compact badge text for spawn pads on the canvas / lists. */
-/** Compact badge text for spawn pads on the canvas / lists. */
 export function spawnTileShort(kind: SpawnTileKind): string {
   switch (kind) {
     case "spider":
@@ -163,7 +160,6 @@ export function spawnTileShort(kind: SpawnTileKind): string {
   }
 }
 
-/** Accent color used when drawing / highlighting a spawn pad. */
 /** Accent color used when drawing / highlighting a spawn pad. */
 export function spawnTileAccent(kind: SpawnTileKind): string {
   switch (kind) {
@@ -201,7 +197,6 @@ export const ambientFoeOfTile = spawnTileOf as (
 ) => AmbientFoe | null;
 export const ambientFoeLabel = spawnTileLabel as (kind: AmbientFoe) => string;
 
-/** 0→1→0 triangle wave for View → Animate pulse overlays. */
 /** 0→1→0 triangle wave for View → Animate pulse overlays. */
 export function pulsePhase(tick: number, period = 16): number {
   const p = tick % period;

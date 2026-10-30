@@ -17,7 +17,6 @@ export interface MapExit {
 }
 
 /** Inclusive-exclusive overlap of two world-column ranges, or null. */
-/** Inclusive-exclusive overlap of two world-column ranges, or null. */
 function overlapRange(
   a0: number,
   a1: number,
@@ -30,7 +29,6 @@ function overlapRange(
   return { start, end };
 }
 
-/** Compact exit chip text like `→ 6 Water caves · c12`. */
 /** Compact exit chip text like `→ 6 Water caves · c12`. */
 function shortLabel(level: number, fromColumn?: number): string {
   const lv = LEVELS[level];
@@ -283,7 +281,6 @@ export function mergeExits(...groups: MapExit[][]): MapExit[] {
 }
 
 /** One-word solidchrs summary for hover / tile inspector. */
-/** One-word solidchrs summary for hover / tile inspector. */
 export function describeSolid(solidByte: number): string {
   if (blockHasLadder(solidByte)) return "ladder";
   if (blockHasSemifloor(solidByte)) return "semifloor";
@@ -336,7 +333,6 @@ function feetOnLadderEdge(
   return 0x10 + EXIT_Y_WRAP;
 }
 
-/** Robin pose on the destination map after taking this exit (game wrap). */
 /** Robin pose on the destination map after taking this exit (game wrap). */
 export function arrivalAfterExit(doc: RomDoc, _fromLevel: number, exit: MapExit): ExitArrival {
   const to = doc.maps[exit.toLevel];
