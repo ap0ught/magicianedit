@@ -7,13 +7,17 @@ import { romsPlugin } from "./vite.roms.ts";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 
+/** Canonical dumps named on the empty screen. Same strings as docs/ROMS.md. */
+const BETA1_ROM = "Magician (USA) (Beta 1) (1990-03-02).nes";
+const USA_ROM = "Magician (USA).nes";
+
 export default defineConfig({
   plugins: [react(), playBridge(), romsPlugin()],
   server: { fs: { allow: [here] } },
   define: {
     __SAMPLE_ROMS__: JSON.stringify([
-      { label: "Inherited mapper 71", file: "/asia.nes" },
-      { label: "Inherited rebuild", file: "/rebuilt.nes" },
+      { label: "Beta 1 (pin)", file: `/roms/${encodeURIComponent(BETA1_ROM)}` },
+      { label: "USA release", file: `/roms/${encodeURIComponent(USA_ROM)}` },
     ]),
   },
 });

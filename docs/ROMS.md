@@ -52,6 +52,8 @@ Copied from `asm/patches.py` `CARTS`. Re-check with `tools/carts.py` before trea
 
 A production build copies whatever `.nes` files are present in `roms/` into `dist/roms/`. That output is local. Do not publish carts from CI.
 
+The empty screen lists that folder and names the Beta 1 pin and the USA release (`Magician (USA) (Beta 1) (1990-03-02).nes`, `Magician (USA).nes`). Sample buttons open those two paths under `/roms/`.
+
 ## Inherited shell (until Magician I/O)
 
 `make check` still looks for `public/asia.nes` and `public/rebuilt.nes`. Those are mapper 71 Super Robin Hood images for the inherited editor, not Magician dumps. Opening a Magician cart in the current UI hits the mapper 71 guard in `src/rom.ts`. Leave that guard in place until a Magician loader exists.
