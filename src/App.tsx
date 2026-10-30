@@ -104,11 +104,11 @@ const COLLECTABLE_TYPES = new Set([5, 7, 8]); // KEY, SECRET, MARION
 
 type Mode = "bg" | "obj" | "castle" | "robin";
 
-/** Rebuilt mapper-71 cart published in the parent source repo (download → place in roms/). */
+/** Rebuilt mapper-71 cart from the parent source repo Releases (download → place in roms/). */
 const REBUILT_ROM_URL =
-  "https://github.com/ap0ught/SuperRobinHoodNESSource/blob/master/srh-rebuilt.nes";
+  "https://github.com/ap0ught/SuperRobinHoodNESSource/releases/latest";
 const REBUILD_ROMS_HINT =
-  "Download a rebuilt .nes (srh-rebuilt.nes) from SuperRobinHoodNESSource, then drop it into the project roms/ folder.";
+  "Download srh-rebuilt.nes from SuperRobinHoodNESSource Releases, then drop it into the project roms/ folder.";
 
 const CREDITS = {
   title: "RobinEdit",
