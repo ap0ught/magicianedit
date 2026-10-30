@@ -2,7 +2,7 @@
 
 Guidance for assistants working on **RobinEdit** (Vite + React + TypeScript editor for Super Robin Hood NES, **mapper 71**).
 
-Standalone repo: [ap0ught/robinedit](https://github.com/ap0ught/robinedit). Parent cart/docs: [ap0ught/SuperRobinHoodNESSource](https://github.com/ap0ught/SuperRobinHoodNESSource). Parent trees may keep a lagging `robinedit/` copy — see `MOVED.md` there; prefer committing/pushing **this** repo.
+**Credits:** React port by [ap0ught](https://github.com/ap0ught) / Christopher Mayfield; based on Windows RobinEdit by **dizzy9** (Łukasz Kur) on romhacking.net. Prefer this standalone repo: [ap0ught/robinedit](https://github.com/ap0ught/robinedit). Parent cart/docs: [ap0ught/SuperRobinHoodNESSource](https://github.com/ap0ught/SuperRobinHoodNESSource). Parent trees may keep a lagging `robinedit/` copy — see `MOVED.md` there; prefer committing/pushing **this** repo.
 
 ## Non‑negotiables
 

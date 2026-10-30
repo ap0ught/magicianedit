@@ -2,9 +2,9 @@
 
 Browser-based map / object editor for **Super Robin Hood** (NES, Codemasters, mapper 71).
 
-This is a Vite + React + TypeScript remake of the Windows [RobinEdit 0.4.4](https://www.romhacking.net/utilities/1828/) utility by **Łukasz Kur / dizzy9** (upstream tool author on romhacking.net). It aims at the same Asia-style cart layout: map strips, typed objects, PP1 CHR packs, and Robin stats.
+**React port** by [Christopher Mayfield](https://github.com/ap0ught) (**ap0ught**). Based on the Windows [RobinEdit 0.4.4](https://www.romhacking.net/utilities/1828/) utility by **Łukasz Kur / dizzy9** (upstream tool author on romhacking.net). Vite + React + TypeScript; same Asia-style cart layout: map strips, typed objects, PP1 CHR packs, and Robin stats.
 
-**Versioning:** dizzy9’s Windows tool is **0.4.4**. This React app’s first milestone release is **v0.5.0** (React port of that utility). Original Windows archives live in [`upstream/`](upstream/) with attribution — see [`docs/RELEASE.md`](docs/RELEASE.md) for GitHub Actions builds and desktop-exe options.
+**Versioning:** dizzy9’s Windows tool is **0.4.4**. This React app’s first milestone release is **v0.5.0**; ongoing work is **0.6.0+**. Original Windows archives live in [`upstream/`](upstream/) — see [`docs/RELEASE.md`](docs/RELEASE.md) for GitHub Actions builds and desktop-exe options.
 
 ## ROM requirement
 
@@ -40,9 +40,14 @@ make build    # production build → dist/
 
 Requires Node.js and npm.
 
-## Upstream Windows RobinEdit
+## Credits
 
-Original Clickteam/MMF2 Windows editor by **dizzy9** (Łukasz Kur): archives and credit notes in [`upstream/`](upstream/). Also attached to GitHub Releases when published.
+| Role | Who |
+|------|-----|
+| React port (this repo) | [Christopher Mayfield](https://github.com/ap0ught) / **ap0ught** (`cdm@ap0.org`) |
+| Upstream Windows RobinEdit | **Łukasz Kur** / **dizzy9** (`dizzy9@tlen.pl`) — [romhacking.net/utilities/1828](https://www.romhacking.net/utilities/1828/) |
+
+Original Clickteam/MMF2 archives: [`upstream/`](upstream/). Also attached to GitHub Releases.
 
 ## Build / release
 
@@ -52,4 +57,4 @@ Original Clickteam/MMF2 Windows editor by **dizzy9** (Łukasz Kur): archives and
 
 ## License / cart IP
 
-Editor source in this repo is yours to use under whatever terms you apply here. The Super Robin Hood ROM and original game assets remain third-party IP — obtain a dump you are allowed to use; do not commit `.nes` files to this repository. Upstream Windows RobinEdit remains dizzy9’s work.
+React port source is by ap0ught; upstream Windows RobinEdit remains dizzy9’s work. The Super Robin Hood ROM and original game assets remain third-party IP — obtain a dump you are allowed to use; do not commit `.nes` files to this repository.

@@ -105,11 +105,18 @@ const COLLECTABLE_TYPES = new Set([5, 7, 8]); // KEY, SECRET, MARION
 type Mode = "bg" | "obj" | "castle" | "robin";
 
 const CREDITS = {
-  title: "Super Robin Hood Editor 0.4.4",
-  author: "Łukasz Kur",
-  email: "dizzy9@tlen.pl",
-  distributor: "dizzy9",
-  site: "https://www.romhacking.net/utilities/1828/",
+  title: "RobinEdit",
+  /** React port (this app) — ap0ught / Christopher Mayfield */
+  portAuthor: "Christopher Mayfield",
+  portHandle: "ap0ught",
+  portUrl: "https://github.com/ap0ught",
+  portEmail: "cdm@ap0.org",
+  /** Original Windows RobinEdit on romhacking.net */
+  upstreamAuthor: "Łukasz Kur",
+  upstreamHandle: "dizzy9",
+  upstreamEmail: "dizzy9@tlen.pl",
+  upstreamSite: "https://www.romhacking.net/utilities/1828/",
+  upstreamVersion: "0.4.4",
 };
 
 export function App() {
@@ -1068,16 +1075,24 @@ function CreditsBlock() {
   return (
     <div className="credits">
       <p>
-        <strong>{CREDITS.title}</strong>
+        <strong>{CREDITS.title}</strong> (React port)
       </p>
       <p>
-        by {CREDITS.author}
+        React port by {CREDITS.portAuthor} (
+        <a href={CREDITS.portUrl} target="_blank" rel="noreferrer">
+          {CREDITS.portHandle}
+        </a>
+        )
         <br />
-        <span className="muted">{CREDITS.email}</span>
+        <span className="muted">{CREDITS.portEmail}</span>
       </p>
       <p>
-        From <strong>{CREDITS.distributor}</strong> on{" "}
-        <a href={CREDITS.site} target="_blank" rel="noreferrer">
+        Based on Windows RobinEdit {CREDITS.upstreamVersion} by {CREDITS.upstreamAuthor} (
+        <strong>{CREDITS.upstreamHandle}</strong>)
+        <br />
+        <span className="muted">{CREDITS.upstreamEmail}</span>
+        <br />
+        <a href={CREDITS.upstreamSite} target="_blank" rel="noreferrer">
           romhacking.net/utilities/1828
         </a>
       </p>
@@ -1092,8 +1107,8 @@ function AboutModal({ onClose }: { onClose: () => void }) {
         <h2>Author</h2>
         <CreditsBlock />
         <p className="hint">
-          This React port edits the same mapper 71 Super Robin Hood ROM layouts as the Windows
-          RobinEdit 0.4.4 tool.
+          This React port edits the same mapper 71 Super Robin Hood ROM layouts as dizzy9’s Windows
+          RobinEdit {CREDITS.upstreamVersion} tool.
         </p>
         <button className="primary" onClick={onClose}>
           Close

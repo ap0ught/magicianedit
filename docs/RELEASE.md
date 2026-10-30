@@ -1,9 +1,16 @@
 # Releases and packaging
 
+## Attribution
+
+- **React port:** [Christopher Mayfield](https://github.com/ap0ught) / **ap0ught** (`cdm@ap0.org`)
+- **Upstream Windows RobinEdit:** Łukasz Kur / **dizzy9** ([romhacking.net/utilities/1828](https://www.romhacking.net/utilities/1828/))
+
 ## Versioning
 
-- **dizzy9 RobinEdit 0.4.4** — original Windows tool ([romhacking.net/utilities/1828](https://www.romhacking.net/utilities/1828/)); archives in [`upstream/`](../upstream/).
-- **This React app** — separate line. First milestone release: **v0.5.0** (“React port of RobinEdit 0.4.4”). Ongoing work continues on the next minor (`package.json`).
+- **dizzy9 RobinEdit 0.4.4** — original Windows tool; archives in [`upstream/`](../upstream/).
+- **This React app** — separate line by ap0ught. First milestone: **v0.5.0** (“React port of RobinEdit 0.4.4”). Ongoing work: **0.6.0+** (`package.json`).
+
+Desktop packaging tracking: [issue #2](https://github.com/ap0ught/robinedit/issues/2).
 
 ## Do we build in GitHub Actions?
 

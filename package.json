@@ -1,7 +1,9 @@
 {
   "name": "robinedit",
   "private": true,
-  "version": "0.5.0",
+  "version": "0.6.0",
+  "description": "React port of RobinEdit for Super Robin Hood (NES, mapper 71)",
+  "author": "Christopher Mayfield <cdm@ap0.org> (https://github.com/ap0ught)",
   "type": "module",
   "scripts": {
     "dev": "vite",

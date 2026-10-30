@@ -9,10 +9,13 @@ These archives are the **original Windows RobinEdit** utility by **Łukasz Kur**
 
 ## Attribution
 
-- **Author / upstream tool:** Łukasz Kur (`dizzy9@tlen.pl`), **dizzy9** on romhacking.net
-- **Utility page:** https://www.romhacking.net/utilities/1828/
-- This React app (this repo) is a separate remake that aims at the same Asia-style mapper-71 cart layout. It is **not** the Clickteam/MMF2 Windows binary.
+| Role | Who |
+|------|-----|
+| **Upstream Windows tool** | Łukasz Kur (`dizzy9@tlen.pl`), **dizzy9** on romhacking.net — https://www.romhacking.net/utilities/1828/ |
+| **React port** (this repo) | [Christopher Mayfield](https://github.com/ap0ught) / **ap0ught** (`cdm@ap0.org`) |
+
+This React app is a separate remake that aims at the same Asia-style mapper-71 cart layout. It is **not** the Clickteam/MMF2 Windows binary.
 
 Do **not** commit Super Robin Hood `.nes` ROMs here or elsewhere in this repo.
 
-Contact / credit in the UI About modal mirrors the same dizzy9 attribution.
+The UI Author/About modal credits both the React port author and dizzy9 as upstream.
