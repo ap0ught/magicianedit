@@ -1,4 +1,5 @@
-# Pull-request / main CI: install, typecheck+build, selftest.
+# Pull-request / main CI: install and production build (tsc + vite).
+# Selftest (npm run check) needs local .nes dumps and is not run in CI.
 name: CI
 
 on:
@@ -23,11 +24,7 @@ jobs:
           node-version: "22"
           cache: npm
 
-      - name: Install
-        run: npm ci
-
-      - name: Build
-        run: npm run build
-
-      - name: Selftest
-        run: npm run check
+      - name: Install and build
+        run: |
+          npm ci
+          npm run build
