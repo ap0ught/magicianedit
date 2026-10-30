@@ -29,6 +29,7 @@ class Bits {
     return carry;
   }
 
+  /** Read `n` bits MSB-first into an integer. */
   getN(n: number): number {
     let v = 0;
     for (let i = 0; i < n; i++) v = (v << 1) | this.getc();
@@ -58,6 +59,7 @@ interface Lut {
   nexts: number[];
 }
 
+/** Read the 4-color Markov LUT block from the bitstream. */
 function parseLuts(bits: Bits): Lut[] {
   const luts: Lut[] = [{ mode: 0, nexts: [] }, { mode: 0, nexts: [] }, { mode: 0, nexts: [] }, { mode: 0, nexts: [] }];
   // Colors 3..0 (reverse order), matching the cart unpacker / Markov tool.
@@ -77,6 +79,7 @@ function parseLuts(bits: Bits): Lut[] {
   return luts;
 }
 
+/** Decode one pixel color from the previous color via the LUT. */
 function parsePixel(bits: Bits, luts: Lut[], prev: number): number {
   const { mode, nexts } = luts[prev];
   const code = bits.golomb(mode);
@@ -85,6 +88,7 @@ function parsePixel(bits: Bits, luts: Lut[], prev: number): number {
   return [prev, ...nexts][code];
 }
 
+/** Decode one 8-pixel tile row (or copy the previous row). */
 function parseRow(bits: Bits, luts: Lut[], prevRow: number[]): number[] {
   if (bits.getc()) return prevRow.slice();
   const row = [bits.getN(2)];
@@ -92,6 +96,7 @@ function parseRow(bits: Bits, luts: Lut[], prevRow: number[]): number[] {
   return row;
 }
 
+/** Pack 8 color indices into NES bitplane bytes. */
 function rowToPlanes(row: number[]): { lo: number; hi: number } {
   let lo = 0;
   let hi = 0;

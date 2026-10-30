@@ -45,6 +45,7 @@ export function romForPlayFromMap(
   return out;
 }
 
+/** Suggested download name for a Play-from-map patched ROM. */
 export function playRomFileName(level: number): string {
   const slug = LEVELS[level].name.replace(/\s+/g, "-").toLowerCase();
   return `srh-play-${slug}.nes`;
@@ -81,6 +82,7 @@ export function spawnPose(doc: RomDoc, level: number): { x: number; y: number } 
   };
 }
 
+/** Solid (non-ladder) collision for spawn floor search. */
 function isBlocking(solid: number): boolean {
   return solid !== 0 && !blockHasLadder(solid);
 }
@@ -99,6 +101,7 @@ function floorRowInColumn(doc: RomDoc, level: number, col: number): number | nul
   return found;
 }
 
+/** True if any cell in the column has a ladder quadrant. */
 function columnHasLadder(doc: RomDoc, level: number, col: number): boolean {
   const map = doc.maps[level];
   if (col < 0 || col >= map.width) return false;

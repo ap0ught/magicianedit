@@ -39,6 +39,8 @@ export interface LevelImage {
   rgba: Uint8ClampedArray;
 }
 
+/** Blit one 8×8 NES CHR tile into an RGBA buffer. */
+/** Blit one 8×8 NES CHR tile into an RGBA buffer. */
 function blitTile(
   rgba: Uint8ClampedArray,
   w: number,
@@ -67,6 +69,8 @@ function blitTile(
   }
 }
 
+/** Fill the level buffer with a subtle checkerboard (transparent-tile backdrop). */
+/** Fill the level buffer with a subtle checkerboard (transparent-tile backdrop). */
 function fillChecker(rgba: Uint8ClampedArray, w: number, h: number): void {
   for (let y = 0; y < h; y++) {
     for (let x = 0; x < w; x++) {
@@ -81,6 +85,8 @@ function fillChecker(rgba: Uint8ClampedArray, w: number, h: number): void {
   }
 }
 
+/** Rasterize one map strip to RGBA (metatiles + optional flash overrides). */
+/** Rasterize one map strip to RGBA (metatiles + optional flash overrides). */
 export function renderLevelRGBA(
   doc: RomDoc,
   level: number,
@@ -174,6 +180,8 @@ export const DEFAULT_EXPORT: ExportLayers = {
   marion: true,
 };
 
+/** Paint a full editor/export view of a level onto a 2D canvas. */
+/** Paint a full editor/export view of a level onto a 2D canvas. */
 export function paintLevel(
   ctx: CanvasRenderingContext2D,
   doc: RomDoc,

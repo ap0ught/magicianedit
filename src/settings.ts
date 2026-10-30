@@ -28,6 +28,7 @@ export function orderedChrSets(activeIndex: number): { name: string; index: numb
   return [{ name: `Custom`, index: activeIndex, active: true }, ...known];
 }
 
+/** Display name for a mapchrsdefs list index. */
 export function chrSetName(chrIndex: number): string {
   return CHR_SETS.find((c) => c.index === chrIndex)?.name ?? `Custom (${chrIndex})`;
 }
@@ -92,6 +93,7 @@ export function runTableSpeedPx(index: number, subpixel: number): number {
   return runTablePixelStep(index) + (subpixel & 255) / 256;
 }
 
+/** Byte-signature scan; negative sig entries are wildcards. */
 function find(bytes: Uint8Array, sig: number[], from = 0): number {
   outer: for (let i = from; i <= bytes.length - sig.length; i++) {
     for (let j = 0; j < sig.length; j++) {
@@ -140,6 +142,7 @@ export function findRobinStats(bytes: Uint8Array): RobinStats | null {
   };
 }
 
+/** Read lives / hearts / jump / run-table values from located offsets. */
 export function readRobin(doc: RomDoc, stats: RobinStats) {
   const b = doc.bytes;
   const after = b[stats.afterExtraOff];
@@ -160,6 +163,7 @@ export function readRobin(doc: RomDoc, stats: RobinStats) {
   };
 }
 
+/** Build ROM edits for one Robin stats field (not the full run table). */
 export function patchRobin(
   doc: RomDoc,
   stats: RobinStats,
@@ -182,6 +186,7 @@ export function patchRobin(
   return edits;
 }
 
+/** Single-byte edit for one `runtablelo` slot. */
 export function setRunEntry(doc: RomDoc, stats: RobinStats, index: number, value: number): Edit {
   if (index < 0 || index >= RUN_TABLE_LEN) {
     throw new RangeError(`run table index ${index} out of range`);
@@ -203,6 +208,7 @@ export function setRunTable(doc: RomDoc, stats: RobinStats, values: number[]): E
   return edits;
 }
 
+/** Restore the stock ×5 run acceleration curve. */
 export function resetRunTable(doc: RomDoc, stats: RobinStats): Edit[] {
   return setRunTable(doc, stats, stockRunTable());
 }

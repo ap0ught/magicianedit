@@ -29,6 +29,7 @@ export const SECRET_DESCS: readonly string[] = [
   "barrels appear",
 ];
 
+/** Human description of a secrettable script index. */
 export function secretDesc(secretId: number): string {
   if (secretId >= 0 && secretId < SECRET_DESCS.length) return SECRET_DESCS[secretId];
   return `unknown script #${secretId}`;
@@ -39,6 +40,7 @@ export function secretLabel(secretId: number): string {
   return `SECRET #${secretId} · ${secretDesc(secretId)}`;
 }
 
+/** Truncated secret description for tight UI slots. */
 export function secretShort(secretId: number): string {
   const d = secretDesc(secretId);
   return d.length > 28 ? `${d.slice(0, 26)}…` : d;

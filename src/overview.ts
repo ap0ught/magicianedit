@@ -10,6 +10,7 @@ export interface WorldLayout {
   height: number;
 }
 
+/** Pixel size of the multi-strip castle overview canvas. */
 export function worldLayout(doc: RomDoc, scale = 2): WorldLayout {
   let worldCols = 0;
   let tiers = 0;

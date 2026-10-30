@@ -42,6 +42,7 @@ export interface KeyLinkInfo {
   door: DoorRec | null;
 }
 
+/** File offset of XTRACONT.ROU `doordata`, or -1 if missing. */
 export function findDoordata(bytes: Uint8Array): number {
   outer: for (let i = 0; i <= bytes.length - DOOR_SIG.length; i++) {
     for (let j = 0; j < DOOR_SIG.length; j++) {
@@ -52,6 +53,7 @@ export function findDoordata(bytes: Uint8Array): number {
   return -1;
 }
 
+/** Parse door rectangles (link 255, 254, …) from doordata. */
 export function loadDoors(doc: RomDoc): DoorRec[] {
   const off = findDoordata(doc.bytes);
   if (off < 0) return [];
@@ -80,6 +82,7 @@ export function loadDoors(doc: RomDoc): DoorRec[] {
   return doors;
 }
 
+/** Platforms / lifts whose id byte matches a key UNLINK target. */
 function findPlatforms(doc: RomDoc, id: number) {
   const hits: KeyLinkInfo["platforms"] = [];
   for (let lv = 0; lv < LEVELS.length; lv++) {

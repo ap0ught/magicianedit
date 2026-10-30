@@ -30,6 +30,7 @@ export function cannonBounds(raw: number[]): SpriteBounds {
   return { x: colX - 12, y, w: 24, h: 16 };
 }
 
+/** AABB for archer/cannon overlays; null for other object types. */
 export function enemyBounds(type: number, raw: number[]): SpriteBounds | null {
   if (type === 2) return archerBounds(raw);
   if (type === 6) return cannonBounds(raw);
@@ -43,6 +44,7 @@ export function doorBounds(column: number, bottomRow: number, tileHeight: number
   return { x: column * 16, y: top * 16, w: 16, h: (bottomRow - top + 1) * 16 };
 }
 
+/** Draw one 8×8 CHR tile onto the canvas (skips color 0). */
 function blitTile(
   ctx: CanvasRenderingContext2D,
   pattern: Uint8Array,
@@ -67,6 +69,7 @@ function blitTile(
   }
 }
 
+/** Unpack a SPRITESD frame header + tile id list. */
 function frameTiles(header: number, ids: number[]): { w: number; h: number; tiles: number[] } {
   return { w: (header >> 4) & 15, h: header & 15, tiles: ids };
 }
@@ -95,6 +98,7 @@ function spriteRgb(doc: RomDoc, level: number): [number, number, number][] {
   return [0, 1, 2, 3].map((i) => nesColor(pal?.[i] ?? (i === 0 ? 0x0e : 0x30 - i * 0x10)));
 }
 
+/** Blit a multi-tile SPRITESD frame at a pixel origin. */
 function drawFrame(
   ctx: CanvasRenderingContext2D,
   pattern: Uint8Array,

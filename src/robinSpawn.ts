@@ -32,6 +32,7 @@ export function robinSpawnOnLevel(doc: RomDoc, level: number): RobinSpawn | null
   };
 }
 
+/** Always-available start pose (falls back if world-X remap is off-map). */
 export function robinSpawnInfo(doc: RomDoc): RobinSpawn {
   const on = robinSpawnOnLevel(doc, START_LEVEL);
   if (on) return on;

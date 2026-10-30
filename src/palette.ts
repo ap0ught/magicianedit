@@ -6,6 +6,7 @@ export const MASTER_PAL: Uint8Array = Uint8Array.from(atob(MASTER_B64), (c) =>
   c.charCodeAt(0),
 );
 
+/** RGB triple for an NES palette index (0–63). */
 export function nesColor(index: number): [number, number, number] {
   const i = (index & 63) * 3;
   return [MASTER_PAL[i], MASTER_PAL[i + 1], MASTER_PAL[i + 2]];

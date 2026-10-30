@@ -139,6 +139,8 @@ export function buildBytesFromSteps(baseline: Uint8Array, steps: ChangeStep[]): 
   return out;
 }
 
+/** Count of unique ROM offsets touched across timeline steps. */
+/** Count of unique ROM offsets touched across timeline steps. */
 export function totalEditBytes(steps: ChangeStep[]): number {
   const offs = new Set<number>();
   for (const s of steps) for (const e of s.edits) offs.add(e.off);

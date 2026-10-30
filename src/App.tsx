@@ -125,6 +125,7 @@ const CREDITS = {
   upstreamVersion: "0.4.4",
 };
 
+/** Main RobinEdit shell — ROM load, undo/redo, level stage, and side panels. */
 export function App() {
   const fileRef = useRef<HTMLInputElement>(null);
   const stacks = useRef<{ undo: Edit[][]; redo: Edit[][] }>({ undo: [], redo: [] });
@@ -168,11 +169,13 @@ export function App() {
 
   const pickups = useMemo(() => (doc ? loadPickups(doc) : []), [doc, rev]);
 
+  /** Clear undo/redo stacks after open/save. */
   function resetHistory() {
     stacks.current = { undo: [], redo: [] };
     setHistory({ undo: 0, redo: 0 });
   }
 
+  /** Parse bytes into a RomDoc and reset editor state for a new file. */
   function openBytes(bytes: Uint8Array, name: string) {
     try {
       const next = loadRom(bytes, name);
@@ -191,10 +194,12 @@ export function App() {
     }
   }
 
+  /** Read a File as ArrayBuffer and open it as a ROM. */
   function readFile(file: File) {
     file.arrayBuffer().then((buf) => openBytes(new Uint8Array(buf), file.name));
   }
 
+  /** Apply edits to the working ROM, push undo, and mark dirty. */
   function commit(edits: Edit[]) {
     if (!doc) return;
     const real = edits.filter((e) => e.prev !== e.next);
@@ -207,6 +212,7 @@ export function App() {
     setRev((r) => r + 1);
   }
 
+  /** Reverse the last committed edit group. */
   function undo() {
     if (!doc) return;
     const step = stacks.current.undo.pop();
@@ -219,6 +225,7 @@ export function App() {
     setRev((r) => r + 1);
   }
 
+  /** Re-apply the last undone edit group. */
   function redo() {
     if (!doc) return;
     const step = stacks.current.redo.pop();
@@ -255,6 +262,7 @@ export function App() {
     setRev((r) => r + 1);
   }
 
+  /** Build the pre-save change timeline from undo + baseline diff. */
   function collectSaveSteps(): ChangeStep[] {
     if (!doc) return [];
     if (stacks.current.undo.length) return stepsFromUndo(doc, stacks.current.undo);
@@ -302,6 +310,7 @@ export function App() {
     void writeRomFile(forcePicker);
   }
 
+  /** Write the working ROM via File System Access API or download fallback. */
   async function writeRomFile(forcePicker = false) {
     if (!doc) return;
     const name = doc.name.toLowerCase().endsWith(".nes") ? doc.name : `${doc.name}.nes`;
@@ -950,6 +959,7 @@ export function App() {
   );
 }
 
+/** Map column for an object record, or null if it has no column anchor. */
 function objectColumn(doc: RomDoc, level: number, index: number): number | null {
   const rec = doc.objects[level][index];
   if (!rec) return null;
@@ -958,6 +968,7 @@ function objectColumn(doc: RomDoc, level: number, index: number): number | null 
   return Math.max(0, Math.min(doc.maps[level].width - 1, Math.floor(a.x / 16)));
 }
 
+/** Toolbar dropdown to jump the stage to a hostile object. */
 function ObjectJumpSelect({
   label,
   emptyLabel,
@@ -1077,6 +1088,7 @@ function ObjectJumpSelect({
   );
 }
 
+/** Attribution links shown on the empty screen and About modal. */
 function CreditsBlock() {
   return (
     <div className="credits">
@@ -1106,6 +1118,7 @@ function CreditsBlock() {
   );
 }
 
+/** Version / credits dialog. */
 function AboutModal({ onClose }: { onClose: () => void }) {
   return (
     <div className="modal-backdrop" onClick={onClose}>
@@ -1207,6 +1220,7 @@ function SaveReviewModal({
   );
 }
 
+/** Full-castle overview canvas for jumping between map strips. */
 function OverviewModal({
   doc,
   level,
@@ -1289,6 +1303,7 @@ function OverviewModal({
   );
 }
 
+/** Empty-state ROM picker (file open + roms/ listing). */
 function Empty({
   error,
   onOpen,
@@ -1303,6 +1318,7 @@ function Empty({
   const samples = typeof __SAMPLE_ROMS__ === "undefined" ? [] : __SAMPLE_ROMS__;
   const [roms, setRoms] = useState<string[]>([]);
 
+  /** Reload the roms/ folder listing from the Vite middleware. */
   const refreshRoms = () => {
     void (async () => {
       try {
@@ -1405,6 +1421,7 @@ function Empty({
   );
 }
 
+/** Zoomable level canvas — paint, object drag, hover, and exits. */
 function Stage({
   doc,
   level,
@@ -1517,6 +1534,7 @@ function Stage({
     onFocusHandled();
   }, [focusColumn, level, zoom, onFocusHandled]);
 
+  /** Convert a pointer event to map cell / pixel coordinates. */
   function cell(e: React.PointerEvent<HTMLCanvasElement>) {
     const px = e.nativeEvent.offsetX / zoom;
     const py = e.nativeEvent.offsetY / zoom;
@@ -1528,6 +1546,7 @@ function Stage({
     };
   }
 
+  /** Stroke one background metatile into the pending paint edits. */
   function paint(x: number, y: number) {
     const map = doc.maps[level];
     if (!stroke.current || x < 0 || y < 0 || x >= map.width || y >= MAP_HEIGHT) return;
@@ -1752,6 +1771,7 @@ function LevelHub({
   );
 }
 
+/** CSS `rgb()` string for an NES palette index. */
 function nesColorCss(index: number): string {
   const [r, g, b] = nesColor(index);
   return `${r},${g},${b}`;
@@ -1859,6 +1879,7 @@ function PaletteModule({
   );
 }
 
+/** Metatile picker + corner magnifier for the paint tool. */
 function TilePanel({
   doc,
   level,
@@ -1935,6 +1956,7 @@ function TilePanel({
     ctx.drawImage(renderMetatile(doc, level, previewId), 0, 0, TILE_PREVIEW, TILE_PREVIEW);
   }, [previewId, doc, level, rev]);
 
+  /** Metatile id under the pointer in the tile-palette canvas. */
   function tileIdAt(e: React.MouseEvent<HTMLCanvasElement>): number | null {
     const canvas = e.currentTarget;
     const sx = canvas.width / Math.max(1, canvas.clientWidth);
@@ -2099,6 +2121,7 @@ function ChrSetPanel({
   );
 }
 
+/** Mapinfo / castle-header fields for the current level. */
 function CastlePanel({
   doc,
   level,
@@ -2113,6 +2136,7 @@ function CastlePanel({
   onPlayMap: () => void;
 }) {
   const map = doc.maps[level];
+  /** Commit one mapinfo byte and refresh cached map meta. */
   function setField(index: number, value: number) {
     const off = map.infoFileOff + index;
     onCommit([{ off, prev: doc.bytes[off], next: value & 255 }]);
@@ -2149,6 +2173,7 @@ function CastlePanel({
   );
 }
 
+/** Lives / hearts / jump / run-table editor. */
 function RobinPanel({
   doc,
   stats,
@@ -2171,6 +2196,7 @@ function RobinPanel({
   const found = stats;
   void rev;
   const values = readRobin(doc, found);
+  /** Commit a Robin stats field edit. */
   function setField(field: keyof typeof values, value: number) {
     onCommit(patchRobin(doc, found, field, value));
   }
@@ -2274,6 +2300,7 @@ function RobinPanel({
   );
 }
 
+/** Object list, hide toggles, insert/delete for the current level. */
 function ObjectPanel({
   doc,
   level,
@@ -2456,6 +2483,7 @@ function ObjectPanel({
   );
 }
 
+/** Raw-byte editor for the selected object record. */
 function Inspector({
   doc,
   rec,
@@ -2468,11 +2496,13 @@ function Inspector({
   onCommit: (edits: Edit[]) => void;
 }) {
   const raw = readRaw(doc, rec);
+  /** Patch one byte of the selected object via undoable edit. */
   function setByte(index: number, value: number) {
     const off = rec.fileOff + index;
     const next = value & 255;
     onCommit([{ off, prev: doc.bytes[off], next }]);
   }
+  /** Patch a little-endian u16 field of the selected object. */
   function setPair(index: number, value: number) {
     const n = Math.max(0, Math.min(0xffff, Math.round(value)));
     onCommit([
@@ -2682,6 +2712,7 @@ function KeyLinkFields({
   );
 }
 
+/** Archer-specific inspector controls (speed, aim, delay). */
 function ArcherFields({
   raw,
   width,
@@ -2693,6 +2724,7 @@ function ArcherFields({
 }) {
   const speed = signed(raw[5]);
   const flags = raw[6];
+  /** Write archer flags byte (raw[6]). */
   function setFlags(next: number) {
     setByte(6, next & 255);
   }
@@ -2739,6 +2771,7 @@ function ArcherFields({
   );
 }
 
+/** Cannon-specific inspector controls (speed / delay). */
 function CannonFields({
   raw,
   width,
@@ -2776,6 +2809,7 @@ function CannonFields({
   );
 }
 
+/** Small trailing hint text under a form field. */
 function Tail({
   raw,
   from,
@@ -2804,6 +2838,7 @@ function Tail({
   );
 }
 
+/** Labeled numeric input that commits on blur / Enter. */
 function Num({
   label,
   value,
@@ -2834,6 +2869,7 @@ function Num({
   );
 }
 
+/** Rasterize the current level view and download a PNG. */
 function exportPng(
   doc: RomDoc,
   level: number,
@@ -2871,6 +2907,7 @@ function exportPng(
   });
 }
 
+/** Display label for a coinco pickup (coin pad vs treasure chest). */
 function pickupPadLabel(doc: RomDoc, p: Pickup): "Coin" | "Heart" | "Treasure" {
   if (!doc.blockrous) return p.kind === "heart" ? "Heart" : "Treasure";
   const tile = doc.blockAt(p.level, p.markColumn, p.row);
@@ -2880,6 +2917,7 @@ function pickupPadLabel(doc: RomDoc, p: Pickup): "Coin" | "Heart" | "Treasure" {
   return "Treasure";
 }
 
+/** Toolbar dropdown to jump to treasures / hearts. */
 function PickupJumpSelect({
   doc,
   pickups,
@@ -2966,6 +3004,7 @@ interface SpawnEnemyHit {
   tileId: number;
 }
 
+/** Collect spider/bat/rat blockrous pads across all levels. */
 function listSpawnEnemyHits(doc: RomDoc): SpawnEnemyHit[] {
   if (!doc.blockrous) return [];
   const out: SpawnEnemyHit[] = [];
@@ -3048,6 +3087,7 @@ function SpawnEnemyJumpSelect({
   );
 }
 
+/** PNG export options (zoom, layers, checkerboard). */
 function ExportModal({
   layers,
   board,
@@ -3105,6 +3145,7 @@ function ExportModal({
   );
 }
 
+/** Detached ArrayBuffer copy safe for Blob / download. */
 function copyBytes(bytes: Uint8Array): ArrayBuffer {
   const copy = new ArrayBuffer(bytes.byteLength);
   new Uint8Array(copy).set(bytes);
@@ -3156,6 +3197,7 @@ async function playFromMap(
   }
 }
 
+/** Trigger a browser download of the given blob data. */
 function download(data: BlobPart, name: string) {
   const blob = data instanceof Blob ? data : new Blob([data]);
   const url = URL.createObjectURL(blob);

@@ -134,6 +134,7 @@ export class RomDoc {
     this.objectRegionEnd = regionEnd;
   }
 
+  /** Unpack (and cache) the 256-tile CHR pattern for a level's chrIndex. */
   patternFor(level: number): Uint8Array {
     const map = this.maps[level];
     const cached = this.patterns.get(map.chrIndex);
@@ -160,20 +161,24 @@ export class RomDoc {
     return this.prgStart + slot * 0x4000 + (ptr - 0x8000);
   }
 
+  /** Metatile id at map column x, row y. */
   blockAt(level: number, x: number, y: number): number {
     const map = this.maps[level];
     return this.bytes[map.dataFileOff + x * MAP_HEIGHT + y];
   }
 
+  /** Drop cached CHR patterns after a chr-set / pack change. */
   invalidatePatterns(): void {
     this.patterns.clear();
   }
 }
 
+/** Little-endian u16 at a file offset. */
 function u16(file: Uint8Array, off: number): number {
   return file[off] | (file[off + 1] << 8);
 }
 
+/** First offset of an exact byte signature, or -1. */
 function findBytes(file: Uint8Array, sig: number[]): number {
   outer: for (let i = 0; i <= file.length - sig.length; i++) {
     for (let j = 0; j < sig.length; j++) if (file[i + j] !== sig[j]) continue outer;
@@ -182,6 +187,7 @@ function findBytes(file: Uint8Array, sig: number[]): number {
   return -1;
 }
 
+/** Locate MAPDATA.DAT `blkstl` (block graphics + map tables). */
 function findBlkstl(file: Uint8Array): number {
   let from = 0;
   while (from < file.length) {
@@ -204,6 +210,7 @@ function findBlkstl(file: Uint8Array): number {
   throw new Error("This ROM does not contain Super Robin Hood block graphics.");
 }
 
+/** Locate the 13×6-byte mapinfo directory by width pattern. */
 function findMapInfo(file: Uint8Array): number {
   for (let i = 0; i <= file.length - WIDTHS.length * 6; i++) {
     let ok = true;
@@ -223,6 +230,7 @@ function findMapInfo(file: Uint8Array): number {
   throw new Error("Could not find the level directory in this ROM.");
 }
 
+/** Locate the packed CHR table used by mapchrsdefs. */
 function findChrTable(file: Uint8Array, docBanks: { prgStart: number; banks: number }): number {
   for (let i = 0; i < file.length - 26; i++) {
     if (
@@ -246,6 +254,7 @@ function findChrTable(file: Uint8Array, docBanks: { prgStart: number; banks: num
   throw new Error("Could not find the compressed character sets in this ROM.");
 }
 
+/** Walk maprouspointer lists into per-level object records. */
 function parseObjects(
   file: Uint8Array,
   fixedFile: number,
@@ -276,6 +285,7 @@ function parseObjects(
   return out;
 }
 
+/** Find maprouspointer by validating increasing CPU pointers + first KEY. */
 function findObjectTable(file: Uint8Array, fixedFile: number): { table: number; objects: ObjRec[][] } {
   const end = fixedFile + 0x4000 - LEVELS.length * 2;
   for (let i = fixedFile; i < end; i++) {
@@ -315,6 +325,7 @@ function findBlockrous(file: Uint8Array): Uint8Array | null {
   return file.subarray(start, start + 256);
 }
 
+/** Re-parse object lists and refresh the packed-region end marker. */
 export function reloadObjects(doc: RomDoc): void {
   doc.objects = parseObjects(doc.bytes, doc.fixedFile, doc.objectTable);
   let scan = doc.objectRegionStart;
@@ -337,6 +348,7 @@ export function objectFreeBytes(doc: RomDoc): number {
   return Math.max(0, end - doc.objectRegionEnd);
 }
 
+/** Write one maprouspointer entry (CPU address in the $C000 window). */
 function setObjPtr(doc: RomDoc, level: number, cpu: number): void {
   const off = doc.objectTable + level * 2;
   doc.bytes[off] = cpu & 255;
@@ -439,6 +451,7 @@ export function insertObject(doc: RomDoc, level: number, type: number, column: n
   return doc.objects[level].length - 1;
 }
 
+/** Validate mapper-71 iNES and build the editor document model. */
 export function loadRom(bytes: Uint8Array, name: string): RomDoc {
   if (bytes.length < 16 || bytes[0] !== 0x4e || bytes[1] !== 0x45 || bytes[2] !== 0x53 || bytes[3] !== 0x1a) {
     throw new Error("That file is not an iNES ROM.");
@@ -520,6 +533,7 @@ export interface Edit {
   next: number;
 }
 
+/** Apply (or reverse) a list of byte patches in place. */
 export function writeEdits(bytes: Uint8Array, edits: Edit[], reverse = false): void {
   const list = reverse ? [...edits].reverse() : edits;
   for (const e of list) bytes[e.off] = reverse ? e.prev : e.next;

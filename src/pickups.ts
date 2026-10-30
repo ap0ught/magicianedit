@@ -14,6 +14,7 @@ export interface Pickup {
 
 const TREASURE_SIG = [17, 5, 44, 5, 89, 5, 50, 4, 42, 4, 22, 4, 10, 4, 25, 1];
 
+/** File offset of NEWBITS.ROU `coinco` treasure/heart table, or -1. */
 export function findCoinco(bytes: Uint8Array): number {
   outer: for (let i = 0; i <= bytes.length - TREASURE_SIG.length; i++) {
     for (let j = 0; j < TREASURE_SIG.length; j++) {
@@ -24,6 +25,7 @@ export function findCoinco(bytes: Uint8Array): number {
   return -1;
 }
 
+/** blockrous animation kind at a map cell, if any. */
 function blockKind(doc: RomDoc, level: number, column: number, row: number): TileAnim | null {
   if (!doc.blockrous) return null;
   return kindFromBlockrou(doc.blockrous[doc.blockAt(level, column, row)]);
@@ -85,6 +87,7 @@ export function loadPickups(doc: RomDoc): Pickup[] {
   return out;
 }
 
+/** Build a single-byte edit that moves a coinco entry's column. */
 export function writePickupColumn(
   doc: RomDoc,
   _pickups: Pickup[],

@@ -21,10 +21,12 @@ export const KINDS: Kind[] = [
   { id: 9, name: "WATER", short: "W", color: "#3ec6d4" },
 ];
 
+/** Look up the eng.ini-style label / color for an object type byte. */
 export function kindOf(type: number): Kind {
   return KINDS.find((k) => k.id === type) ?? { id: type, name: `Type ${type}`, short: "?", color: "#ffffff" };
 }
 
+/** Copy the packed object record bytes from the ROM. */
 export function readRaw(doc: RomDoc, rec: ObjRec): number[] {
   return Array.from(doc.bytes.subarray(rec.fileOff, rec.fileOff + rec.length));
 }
@@ -55,6 +57,7 @@ export function anchorOf(type: number, raw: number[]): Anchor | null {
   return null;
 }
 
+/** Round and clamp a number into [lo, hi]. */
 function clamp(n: number, lo: number, hi: number): number {
   return Math.max(lo, Math.min(hi, Math.round(n)));
 }
@@ -93,6 +96,7 @@ export function moveObject(type: number, raw: number[], dx: number, dy: number, 
   }
 }
 
+/** Topmost object index under a pixel, respecting the hidden-type set. */
 export function hitObject(
   doc: RomDoc,
   level: number,
@@ -134,10 +138,12 @@ export function hitObject(
   return null;
 }
 
+/** Interpret a byte as signed (−128…127). */
 export function signed(n: number): number {
   return n < 128 ? n : n - 256;
 }
 
+/** Fold a signed value into an unsigned byte (0…255). */
 export function unsigned(n: number): number {
   return n < 0 ? n + 256 : n;
 }

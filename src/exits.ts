@@ -16,6 +16,8 @@ export interface MapExit {
   label: string;
 }
 
+/** Inclusive-exclusive overlap of two world-column ranges, or null. */
+/** Inclusive-exclusive overlap of two world-column ranges, or null. */
 function overlapRange(
   a0: number,
   a1: number,
@@ -28,6 +30,8 @@ function overlapRange(
   return { start, end };
 }
 
+/** Compact exit chip text like `→ 6 Water caves · c12`. */
+/** Compact exit chip text like `→ 6 Water caves · c12`. */
 function shortLabel(level: number, fromColumn?: number): string {
   const lv = LEVELS[level];
   const num = lv.name.replace(/^Map\s+/, "");
@@ -48,14 +52,17 @@ export function solidQuadrants(solidByte: number): [number, number, number, numb
   ];
 }
 
+/** True when any solidchrs quadrant is a ladder (code 1). */
 export function blockHasLadder(solidByte: number): boolean {
   return solidQuadrants(solidByte).some((q) => q === 1);
 }
 
+/** True when any solidchrs quadrant is a crouch-through floor (code 2). */
 export function blockHasSemifloor(solidByte: number): boolean {
   return solidQuadrants(solidByte).some((q) => q === 2);
 }
 
+/** Whether the metatile at (col, row) has a ladder quadrant. */
 function isLadderAt(doc: RomDoc, level: number, col: number, row: number): boolean {
   const map = doc.maps[level];
   if (col < 0 || col >= map.width || row < 0 || row >= MAP_HEIGHT) return false;
@@ -63,6 +70,7 @@ function isLadderAt(doc: RomDoc, level: number, col: number, row: number): boole
   return blockHasLadder(doc.blocks.solid[id]);
 }
 
+/** Count ladder cells among the given rows of one column. */
 function ladderCountInRows(doc: RomDoc, level: number, col: number, rows: number[]): number {
   let n = 0;
   for (const r of rows) if (isLadderAt(doc, level, col, r)) n++;
@@ -274,6 +282,8 @@ export function mergeExits(...groups: MapExit[][]): MapExit[] {
   return out;
 }
 
+/** One-word solidchrs summary for hover / tile inspector. */
+/** One-word solidchrs summary for hover / tile inspector. */
 export function describeSolid(solidByte: number): string {
   if (blockHasLadder(solidByte)) return "ladder";
   if (blockHasSemifloor(solidByte)) return "semifloor";
@@ -326,6 +336,8 @@ function feetOnLadderEdge(
   return 0x10 + EXIT_Y_WRAP;
 }
 
+/** Robin pose on the destination map after taking this exit (game wrap). */
+/** Robin pose on the destination map after taking this exit (game wrap). */
 export function arrivalAfterExit(doc: RomDoc, _fromLevel: number, exit: MapExit): ExitArrival {
   const to = doc.maps[exit.toLevel];
   const localCol = exit.toColumn;

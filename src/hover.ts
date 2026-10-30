@@ -6,6 +6,7 @@ import { MAP_HEIGHT, type RomDoc } from "./rom.ts";
 import { secretLabel } from "./secrets.ts";
 import { doorBounds, enemyBounds } from "./sprites.ts";
 
+/** Axis-aligned point-in-rect test for hover hit boxes. */
 function inBox(px: number, py: number, x: number, y: number, w: number, h: number): boolean {
   return px >= x && px < x + w && py >= y && py < y + h;
 }
