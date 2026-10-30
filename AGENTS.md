@@ -13,9 +13,9 @@ Guidance for assistants working on **RobinEdit** (Vite + React + TypeScript edit
 
 ## Journals
 
-Session notes for the port and ROM layouts the editor depends on (`mapinfo`, exits, `blockrous` / ONSCREEN, objects / keys / secrets, CHR / `mapchrsdefs`, `coinco`, play-from-map):
+Session notes for the port and ROM layouts the editor depends on (`mapinfo`, exits, `blockrous` / ONSCREEN, objects / keys / secrets, CHR / `mapchrsdefs`, `coinco`, play-from-map, Robin stats):
 
-→ **[`journals/`](journals/)** — start with [`journals/README.md`](journals/README.md).
+→ **[`journals/`](journals/)** — start with [`journals/README.md`](journals/README.md) (through [`09-robin-settings-cheatlives.md`](journals/09-robin-settings-cheatlives.md)).
 
 Full game source and assembler journals (`01`–`03`, `pds_src/`) live in the parent SuperRobinHoodNESSource `journal/`.
 
@@ -42,6 +42,7 @@ Always-on constraints: [`.cursor/rules/robinedit-core.mdc`](.cursor/rules/robine
 | Exits | Derived from **world‑X / height** + ladder shafts — no exit table. Tile status should mention `exitsUsingTile` |
 | CHR | Switch only known `mapchrsdefs` sets. Cannot safely append packs (`0xFF` terminators). More data → rebuild `pds_src` or remapping hack — [issue #1](https://github.com/ap0ught/robinedit/issues/1) |
 | Play from map | Patch `startlevel` + Robin spawn; title skip; avoid FCEUX `AutoLoadState` pitfalls |
+| Robin lives / hearts / jump / run table | Cart immediates (`MAINLOOP` / `GENERAL` / `CONTROL`); editor UX from dizzy9 `[robin]`; React `findRobinStats` / `patchRobin` — [journal 09](journals/09-robin-settings-cheatlives.md) |
 
 ## Quick commands
 

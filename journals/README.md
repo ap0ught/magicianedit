@@ -11,5 +11,6 @@ These entries were copied from [ap0ught/SuperRobinHoodNESSource](https://github.
 | [06-robin-room-spawn.md](06-robin-room-spawn.md) | Room transitions: ±`$D0` Y wrap, ladder shafts, spawn pose |
 | [07-map-exits-and-shafts.md](07-map-exits-and-shafts.md) | No exit table — geometry + rim ladders; Exits rail |
 | [08-castle-map-numbering.md](08-castle-map-numbering.md) | Map N vs geographic castle overview (`mapheights` + world X) |
+| [09-robin-settings-cheatlives.md](09-robin-settings-cheatlives.md) | Robin stats / cheatLives: cart vs dizzy9 vs `patchRobin` |
 
 Agent entry points: see [`AGENTS.md`](../AGENTS.md) and [`.cursor/skills/`](../.cursor/skills/).
