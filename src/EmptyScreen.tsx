@@ -93,9 +93,9 @@ export function Empty({
     if (!hot) return;
     /** HMR hook: refresh the roms/ list when files change. */
     const onChange = () => refreshRoms();
-    hot.on("srh:roms-changed", onChange);
+    hot.on("magicianedit:roms-changed", onChange);
     return () => {
-      hot.off("srh:roms-changed", onChange);
+      hot.off("magicianedit:roms-changed", onChange);
     };
   }, []);
 
@@ -103,8 +103,9 @@ export function Empty({
     <div className="empty">
       <h1>{CREDITS.title}</h1>
       <p className="empty-sub">
-        Open a Magician cart: MMC3 mapper 4, 128 KiB PRG and 128 KiB CHR. Mapper 71 Robin carts are
-        rejected.
+        Open a Magician cart: MMC3 mapper 4, 128 KiB PRG and 128 KiB CHR. Mapper 71 carts are
+        rejected. Pin Beta 1 first: <code>Magician (USA) (Beta 1) (1990-03-02).nes</code>. The USA
+        release is <code>Magician (USA).nes</code>.
       </p>
       <button className="primary" onClick={onOpen}>
         Open
@@ -131,8 +132,9 @@ export function Empty({
           </div>
         ) : (
           <p className="rom-empty-hint">
-            No local carts yet. Dump policy is <code>docs/ROMS.md</code> in the repo — do not commit{" "}
-            <code>.nes</code> files. Place a Magician dump in <code>roms/</code> and refresh.
+            No local carts yet. Place the Beta 1 pin or the USA release in <code>roms/</code> and
+            refresh. Filenames and hashes are in <code>docs/ROMS.md</code>. Do not commit{" "}
+            <code>.nes</code> files.
           </p>
         )}
       </div>

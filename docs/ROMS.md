@@ -52,6 +52,8 @@ Copied from `asm/patches.py` `CARTS`. Re-check with `tools/carts.py` before trea
 
 A production build copies whatever `.nes` files are present in `roms/` into `dist/roms/`. That output is local. Do not publish carts from CI.
 
+The empty screen lists that folder and names the Beta 1 pin and the USA release (`Magician (USA) (Beta 1) (1990-03-02).nes`, `Magician (USA).nes`). Sample buttons open those two paths under `/roms/`.
+
 ## Checks
 
 `npm run check:magician` builds a synthetic iNES image and round-trips it. It does not read a `.nes` file. If the Beta 1 dump is on disk at the path recorded in that test, the same run also checks a byte-identical save. `npm run check` then runs `src/selftest.ts`, which still looks for mapper 71 samples at `public/asia.nes` and `public/rebuilt.nes`. Those samples are not Magician carts.
