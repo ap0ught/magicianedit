@@ -49,7 +49,7 @@ export function romsPlugin(): Plugin {
   let outDir = path.join(here, "dist");
 
   return {
-    name: "srh-roms",
+    name: "magicianedit-roms",
     configResolved(config) {
       outDir = path.resolve(config.root, config.build.outDir);
     },
@@ -100,7 +100,7 @@ export function romsPlugin(): Plugin {
       // Soft-reload empty-state clients when files appear/disappear under roms/
       const notify = (file: string) => {
         if (!file.startsWith(romsDir) || !/\.nes$/i.test(file)) return;
-        server.ws.send({ type: "custom", event: "srh:roms-changed" });
+        server.ws.send({ type: "custom", event: "magicianedit:roms-changed" });
       };
       server.watcher.on("add", notify);
       server.watcher.on("unlink", notify);

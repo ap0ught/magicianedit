@@ -4,9 +4,9 @@ Milestones **6–7**. Keep Vite `/api/play` pattern from RobinEdit; retarget pat
 
 ## `roms/` listing API (#13)
 
-Already present: `vite.roms.ts` serves `GET /api/roms` and `/roms/<file>` from project-root `roms/`, copies into `dist/roms/` + `manifest.json` on build. Plugin name still `srh-roms` — rename when convenient.
+`vite.roms.ts` serves `GET /api/roms` and `/roms/<file>` from project-root `roms/`, and on build copies those files into `dist/roms/` plus `manifest.json`. Plugin id is `magicianedit-roms`. The empty-screen HMR event is `magicianedit:roms-changed`. The handler still lists every `roms/*.nes`; it does not filter by Magician filename.
 
-Magician work: ensure UI lists Magician dumps; no format change required beyond gitignore policy (journal 10). Do not commit `.nes`.
+Empty-screen copy and the sample buttons name the Beta 1 pin (`Magician (USA) (Beta 1) (1990-03-02).nes`) and the USA release (`Magician (USA).nes`). `*.nes` stays gitignored (journal 10). Do not commit `.nes`.
 
 ## Play-from-map patch (#24)
 

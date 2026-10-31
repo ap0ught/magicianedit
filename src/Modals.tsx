@@ -18,9 +18,8 @@ export function AboutModal({ onClose }: { onClose: () => void }) {
         <h2>Author</h2>
         <CreditsBlock />
         <p className="hint">
-          MagicianEdit is a planned port of RobinEdit. This build still edits mapper 71 layouts, the
-          same family as dizzy9’s Windows RobinEdit {CREDITS.upstreamVersion}. Magician MMC3 load and
-          save are not implemented yet.
+          MagicianEdit opens Magician MMC3 carts and round-trips their map packs. The shell started as
+          a port of dizzy9’s Windows RobinEdit {CREDITS.upstreamVersion}. Mapper 71 carts are rejected.
         </p>
         <button className="primary" onClick={onClose}>
           Close
