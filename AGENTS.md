@@ -1,6 +1,6 @@
 # AGENTS.md — MagicianEdit
 
-Guidance for assistants working on **MagicianEdit** (Vite + React + TypeScript editor for **Magician**, NES, Taxan / Eurocom, **MMC3**). This tree is a planned port of RobinEdit. Magician ROM format I/O is **not** implemented. The inherited shell still compiles and runs mapper 71 editor logic.
+Guidance for assistants working on **MagicianEdit** (Vite + React + TypeScript editor for **Magician**, NES, Taxan / Eurocom, **MMC3**). This tree started as a port of RobinEdit. Magician load/save lives in **`src/magician/`**. The open path must use that loader. Mapper 71 carts are rejected.
 
 **Credits:** [ap0ught](https://github.com/ap0ught) / Christopher Mayfield. The shell comes from [ap0ught/robinedit](https://github.com/ap0ught/robinedit) (React port of Windows RobinEdit by **dizzy9** / Łukasz Kur). Commit and push **this** repo.
 
@@ -18,8 +18,7 @@ Cite magician-nes journals instead of copying them (`19-between-beta1-and-releas
 ## Non-negotiables
 
 - **Never commit `.nes` files** (or secrets). Users supply a dump; `roms/*.nes` and `public/*.nes` are gitignored. Policy: [`docs/ROMS.md`](docs/ROMS.md). Pin research to **Beta 1** first.
-- **Do not grow the frozen Robin format modules.** New Magician format code goes in **new files**. No `src/robin/` vs `src/magician/` split, no unplug, and no deletion until a Magician document type exists. Decision: [`journal/10-scaffold-dump-policy.md`](journal/10-scaffold-dump-policy.md).
-- **Do not invent Magician load/save** in the scaffold. Keep the inherited mapper 71 paths compiling.
+- **Do not grow the frozen Robin format modules.** Magician load/save is `src/magician/`. Leave the mapper 71 modules compiling in place; do not move or delete them. Decision: [`journal/10-scaffold-dump-policy.md`](journal/10-scaffold-dump-policy.md).
 - Prefer **change-timeline review before Save** when the UI offers it.
 - Validate with `npx tsc --noEmit` and `make check` when sample ROMs exist under `public/`.
 
@@ -31,7 +30,7 @@ Inherited Robin session notes (historical, still useful while mapper 71 code is 
 
 ## Inherited Robin domain (mapper 71)
 
-The live editor is still this domain. It is **not** Magician’s format. Skills and the table below describe that inherited shell only.
+That domain is **not** on the open path. Skills and the table below describe the frozen mapper 71 modules only.
 
 | Skill | Use when |
 |-------|----------|
@@ -58,7 +57,7 @@ Always-on constraints for that shell: [`.cursor/rules/robinedit-core.mdc`](.curs
 
 ```bash
 make          # install + http://127.0.0.1:5173/
-make check    # ROM selftest (needs public/*.nes; inherited mapper 71 carts)
+make check    # Magician synthetic load/save, then the inherited mapper 71 selftest
 make build    # dist/
 ```
 
