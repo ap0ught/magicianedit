@@ -6,11 +6,14 @@ import { existsSync, readFileSync } from "node:fs";
 import { LEVEL_NAMES } from "./names.ts";
 import {
   applyEdit,
+  clampBrush,
   editPackByte,
   loadMagician,
+  metatileCount,
   paintMapCell,
   saveMagician,
   type MagicianDoc,
+  type MagicianLevel,
 } from "./document.ts";
 import {
   BETA1_LD10,
@@ -167,6 +170,44 @@ if (blkEdit) applyEdit(doc, blkEdit, true);
 if (colEdit) applyEdit(doc, colEdit, true);
 check(sameBytes(saveMagician(doc), synthetic), "undo restores bytes");
 
+const town = doc.levels[0];
+const townTiles = metatileCount(town);
+check(townTiles === 159, `synthetic metatiles ${townTiles}`);
+const kept = town.map.blocks[0];
+check(paintMapCell(town, 0, 0, townTiles) == null, "paint index == count");
+check(paintMapCell(town, 0, 0, 255) == null, "paint 255");
+check(paintMapCell(town, 0, 0, -1) == null, "paint -1");
+check(paintMapCell(town, 0, 0, 1.5) == null, "paint fractional index");
+check(town.map.blocks[0] === kept, "out of range paint does not write");
+const last = paintMapCell(town, 0, 0, townTiles - 1);
+check(last != null && town.map.blocks[0] === townTiles - 1, "paint last metatile");
+if (last) applyEdit(doc, last, true);
+check(town.map.blocks[0] === kept, "last metatile undo");
+
+const shortBlocks = new Uint8Array(town.map.blocks);
+const short = levelWithPack(town, shortBlocks, town.blk.bytes.subarray(0, 8));
+check(metatileCount(short) === 2, `short pack ${metatileCount(short)}`);
+check(paintMapCell(short, 0, 0, 2) == null && shortBlocks[0] === kept, "byte-sized index past a 2-metatile pack");
+check(paintMapCell(short, 0, 0, 255) == null && shortBlocks[0] === kept, "255 past a 2-metatile pack");
+const shortPaint = paintMapCell(short, 0, 0, 1);
+check(shortPaint != null && shortBlocks[0] === 1, "last index of a short pack");
+check(town.map.blocks[0] === kept, "short pack paint leaves the document map");
+
+const wideBlocks = new Uint8Array([0]);
+const wide = levelWithPack(town, wideBlocks, new Uint8Array(256 * 4));
+check(metatileCount(wide) === 256, `wide pack ${metatileCount(wide)}`);
+const widePaint = paintMapCell(wide, 0, 0, 255);
+check(widePaint != null && wideBlocks[0] === 255, "255 fits a 256-metatile pack");
+check(paintMapCell(wide, 0, 0, 256) == null && wideBlocks[0] === 255, "256 does not fit a 256-metatile pack");
+
+check(clampBrush(200, town) === 158, "clamp 200 onto 159 metatiles");
+check(clampBrush(158, town) === 158, "clamp keeps the last metatile");
+check(clampBrush(7, town) === 7, "clamp keeps an in-range brush");
+check(clampBrush(255, wide) === 255, "clamp keeps 255 on a 256-metatile pack");
+check(clampBrush(200, short) === 1, "clamp 200 onto a 2-metatile pack");
+check(clampBrush(-4, town) === 0, "clamp clears a negative brush");
+check(sameBytes(saveMagician(doc), synthetic), "bounds checks leave the cart");
+
 expectThrow(
   () =>
     loadMagician(
@@ -183,6 +224,18 @@ expectThrow(
   "title",
 );
 
+function levelWithPack(level: MagicianLevel, blocks: Uint8Array, blk: Uint8Array): MagicianLevel {
+  return {
+    ...level,
+    xorg: 0,
+    yorg: 0,
+    xlim: blocks.length,
+    ylim: 1,
+    map: { ...level.map, width: blocks.length, height: 1, blocks },
+    blk: { ...level.blk, bytes: blk },
+  };
+}
+
 function golden(path: string, label: string, expect: (doc: MagicianDoc, rom: Uint8Array) => void) {
   if (!existsSync(path)) {
     console.log(`SKIP ${label} golden (missing ${path})`);
@@ -194,7 +247,13 @@ function golden(path: string, label: string, expect: (doc: MagicianDoc, rom: Uin
   expect(loaded, rom);
   check(sameBytes(saveMagician(loaded), rom), `${label} clean save`);
   const before = rom[loaded.levels[0].map.fileOff + 4];
-  const edit = paintMapCell(loaded.levels[0], 0, 0, (loaded.levels[0].map.blocks[0] + 1) & 0xff);
+  const prevIndex = loaded.levels[0].map.blocks[0];
+  const count = metatileCount(loaded.levels[0]);
+  check(paintMapCell(loaded.levels[0], 0, 0, count) == null, `${label} rejects metatile count`);
+  if (255 >= count) check(paintMapCell(loaded.levels[0], 0, 0, 255) == null, `${label} rejects 255`);
+  check(loaded.levels[0].map.blocks[0] === prevIndex, `${label} rejected paint keeps the cell`);
+  const nextIndex = prevIndex === 0 ? 1 : prevIndex - 1;
+  const edit = paintMapCell(loaded.levels[0], 0, 0, nextIndex);
   const saved = saveMagician(loaded);
   const changed = diffOffsets(rom, saved);
   check(edit != null && changed.length === 1 && changed[0] === loaded.levels[0].map.fileOff + 4, `${label} one map byte`);

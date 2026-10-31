@@ -3,9 +3,11 @@ import { Empty } from "./EmptyScreen.tsx";
 import { BlockStage } from "./magician/BlockStage.tsx";
 import {
   applyEdit,
+  clampBrush,
   editPackByte,
   levelWindow,
   loadMagician,
+  metatileCount,
   paintMapCell,
   saveMagician,
   type CellEdit,
@@ -155,6 +157,12 @@ export function App() {
 
   const current = doc?.levels[level] ?? null;
   const view = current ? levelWindow(current) : null;
+  const brushMax = current ? Math.max(0, metatileCount(current) - 1) : 0;
+
+  useEffect(() => {
+    if (!current) return;
+    setBrush((prev) => clampBrush(prev, current));
+  }, [current]);
 
   return (
     <div
@@ -241,9 +249,9 @@ export function App() {
               <input
                 type="number"
                 min={0}
-                max={255}
-                value={brush}
-                onChange={(event) => setBrush(Math.max(0, Math.min(255, Number(event.target.value) || 0)))}
+                max={brushMax}
+                value={clampBrush(brush, current)}
+                onChange={(event) => setBrush(clampBrush(Number(event.target.value) || 0, current))}
               />
             </label>
             <span className="hint">
@@ -262,8 +270,11 @@ export function App() {
                   <BlockStage
                     level={current}
                     revision={rev}
-                    onPaint={(x, y) => commit(paintMapCell(current, x, y, brush))}
-                    onPick={setBrush}
+                    onPaint={(x, y) => commit(paintMapCell(current, x, y, clampBrush(brush, current)))}
+                    onPick={(index) => {
+                      if (index < 0 || index >= metatileCount(current)) return;
+                      setBrush(index);
+                    }}
                     onHover={setHover}
                   />
                 ) : (
@@ -281,7 +292,7 @@ export function App() {
                   CHR bank {current.chrBank} ({current.chr.bytes.length} bytes).
                 </p>
                 <p className="hint">
-                  {current.blk.bytes.length / 4} metatiles. {current.col.bytes.length} colour bytes (attribute, not
+                  {metatileCount(current)} metatiles. {current.col.bytes.length} colour bytes (attribute, not
                   collision), stride {current.map.width / 2}.
                 </p>
                 <p className="hint">Background palette {current.palIndex}, 12 bytes. Backdrop $0F is added at runtime.</p>

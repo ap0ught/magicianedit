@@ -193,10 +193,34 @@ export function saveMagician(doc: MagicianDoc): Uint8Array {
   return out;
 }
 
-/** Paint one cell in the level window. `x`/`y` are window coordinates, not map origin. */
+/** Metatiles in this level's block pack. The game reads each one at `index * 4`. */
+export function metatileCount(level: MagicianLevel): number {
+  return Math.floor(level.blk.bytes.length / 4);
+}
+
+/**
+ * Brush index that still addresses this level's block pack.
+ * A value past the pack clamps to the last metatile; an empty pack clears to 0.
+ */
+export function clampBrush(index: number, level: MagicianLevel): number {
+  const count = metatileCount(level);
+  if (count <= 0) return 0;
+  const max = count - 1;
+  if (!Number.isInteger(index) || index < 0) return 0;
+  if (index > max) return max;
+  return index;
+}
+
+/**
+ * Paint one cell in the level window. `x`/`y` are window coordinates, not map origin.
+ * `index` has to be a metatile in this level's block pack. A value that fits in the
+ * map byte can still read past the pack, and that paint is refused.
+ */
 export function paintMapCell(level: MagicianLevel, x: number, y: number, index: number): CellEdit | null {
   const view = levelWindow(level);
   if (x < 0 || y < 0 || x >= view.cols || y >= view.rows) return null;
+  const tiles = metatileCount(level);
+  if (!Number.isInteger(index) || index < 0 || index >= tiles) return null;
   const cell = (view.y + y) * level.map.width + (view.x + x);
   return writeBuffer(level.map.blocks, "map", level.map.fileOff, cell, index);
 }
