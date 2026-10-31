@@ -236,6 +236,51 @@ function levelWithPack(level: MagicianLevel, blocks: Uint8Array, blk: Uint8Array
   };
 }
 
+// Journal 11 town pack file offsets (bank $8 / $B, pointers $A000 / $A27C / $B418).
+const JOURNAL_MAP = 0x1028c;
+const JOURNAL_BLK = 0x10010;
+const JOURNAL_COL = 0x17428;
+// This body's own table: bank $4, pointers $A000 / $A010 / $A040. initlev names it.
+const ALT_LD = 0x1c400;
+const ALT_DESC = new Uint8Array([
+  0x04, 0x04, 0x00, 0x00, 0x00, 0x00, 0x04, 0x00, 0x02, 0x00, 0xa0, 0x10, 0xa0, 0x40, 0xa0, 0x00,
+]);
+const ALT_MAP = 0x8020;
+const ALT_BLK = 0x8010;
+const ALT_COL = 0x8050;
+
+const other = buildSynthetic((rom) => {
+  for (let i = 0; i < 66; i++) rom.set(TOWN, BETA1_LD10 + i * 16);
+  rom.set([0x00, 0x04, 0x00, 0x02], JOURNAL_MAP);
+  for (let i = 0; i < 66; i++) rom.set(ALT_DESC, ALT_LD + i * 16);
+  rom.set([0x00, 0x04, 0x00, 0x02], ALT_MAP);
+  for (let i = 0; i < 8; i++) rom[ALT_MAP + 4 + i] = encodeMapByte(i + 1);
+  rom.set([0x11, 0x22], ALT_COL);
+  rom.set(
+    [
+      0x0a, 0x26, 0x14, 0x0a, 0x26, 0x14, 0x0a, 0x26, 0x14, 0x0a, 0x26, 0x14, 0x18, 0x69, 0xf0, 0x85, 0x13,
+      0xa9, 0x0f, 0xa8, 0x25, 0x14, 0x69, 0xc3, 0x85, 0x14,
+    ],
+    0x1e200,
+  );
+});
+const otherDoc = loadMagician(other, "other.nes");
+check(otherDoc.beta1 === false && otherDoc.sha1 !== BETA1_SHA1, "other body is not the Beta 1 pin");
+check(otherDoc.ld10Off === ALT_LD, `other ld10 ${otherDoc.ld10Off.toString(16)}`);
+check(otherDoc.levels.length === 66, "other levels");
+check(otherDoc.levels[0].mapBank === 0x04 && otherDoc.levels[0].colBank === 0x04, "other descriptor banks");
+check(otherDoc.levels[0].map.fileOff === ALT_MAP, `other map ${otherDoc.levels[0].map.fileOff.toString(16)}`);
+check(otherDoc.levels[0].blk.fileOff === ALT_BLK, `other blk ${otherDoc.levels[0].blk.fileOff.toString(16)}`);
+check(otherDoc.levels[0].col.fileOff === ALT_COL, `other col ${otherDoc.levels[0].col.fileOff.toString(16)}`);
+check(
+  otherDoc.levels[0].map.fileOff !== JOURNAL_MAP &&
+    otherDoc.levels[0].blk.fileOff !== JOURNAL_BLK &&
+    otherDoc.levels[0].col.fileOff !== JOURNAL_COL,
+  "journal 11 offsets were not applied",
+);
+check(otherDoc.levels[0].map.width === 4 && otherDoc.levels[0].map.blocks[0] === 1, "other map bytes");
+check(sameBytes(saveMagician(otherDoc), other), "other clean save");
+
 function golden(path: string, label: string, expect: (doc: MagicianDoc, rom: Uint8Array) => void) {
   if (!existsSync(path)) {
     console.log(`SKIP ${label} golden (missing ${path})`);
@@ -277,6 +322,10 @@ golden(
     check(loaded.beta1 && loaded.warning == null, "beta1 pin");
     check(loaded.sha1 === BETA1_SHA1, "beta1 sha");
     check(loaded.ld10Off === BETA1_LD10, `beta1 ld10 ${loaded.ld10Off.toString(16)}`);
+    check(loaded.levels[0].mapBank === 0x08 && loaded.levels[0].colBank === 0x0b, "beta1 journal banks");
+    check(loaded.levels[0].blk.fileOff === JOURNAL_BLK, `beta1 journal blk ${loaded.levels[0].blk.fileOff.toString(16)}`);
+    check(loaded.levels[0].map.fileOff === JOURNAL_MAP, `beta1 journal map ${loaded.levels[0].map.fileOff.toString(16)}`);
+    check(loaded.levels[0].col.fileOff === JOURNAL_COL, `beta1 journal col ${loaded.levels[0].col.fileOff.toString(16)}`);
     check(loaded.levels.length === 66, "beta1 levels");
     check(loaded.levels[0].name === "10 Town", loaded.levels[0].name);
     check(loaded.levels[0].map.width === 236 && loaded.levels[0].map.height === 11, "town map");

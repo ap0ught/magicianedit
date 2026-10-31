@@ -4,7 +4,9 @@
  * Pack file offsets come from the 16-byte descriptors in the opened cart
  * (bank byte + CPU pointer in the $A000 window). The journal 11 table is the
  * Beta 1 measurement of those same fields, not a second layout. Beta 1's
- * `ld10` file offset is used only when the body SHA1 matches.
+ * `ld10` file offset is a candidate only when the body SHA1 matches. Every
+ * other body uses the table `initlev` names, and those descriptor bytes are
+ * the banks and pointers. A Beta 1-shaped copy does not replace them.
  *
  * Title, password, and panel (`TIT.DAT` / `PW.DAT` / `PAN.DAT`) are not levels
  * and are never written back.
@@ -323,6 +325,32 @@ function findChrpals(rom: Uint8Array): number {
   );
 }
 
+/**
+ * `initlev` does `curlevind * 16` then `ADC #<ld10` / `ADC #>ld10`.
+ * Those immediates are the level table's CPU address in the fixed bank.
+ * The town-signature scan is only a fallback: it can also hit a Beta 1 copy.
+ */
+function findLd10(rom: Uint8Array): number[] {
+  const found: number[] = [];
+  const prgEnd = INES_HEADER + PRG_BYTES;
+  for (let s = INES_HEADER; s + 26 <= prgEnd; s++) {
+    if (rom[s] !== 0x0a || rom[s + 1] !== 0x26) continue;
+    const t1 = rom[s + 2];
+    if (rom[s + 3] !== 0x0a || rom[s + 4] !== 0x26 || rom[s + 5] !== t1) continue;
+    if (rom[s + 6] !== 0x0a || rom[s + 7] !== 0x26 || rom[s + 8] !== t1) continue;
+    if (rom[s + 9] !== 0x0a || rom[s + 10] !== 0x26 || rom[s + 11] !== t1) continue;
+    if (rom[s + 12] !== 0x18 || rom[s + 13] !== 0x69 || rom[s + 15] !== 0x85) continue;
+    if (rom[s + 17] !== 0xa9 || rom[s + 18] !== 0x0f || rom[s + 19] !== 0xa8) continue;
+    if (rom[s + 20] !== 0x25 || rom[s + 21] !== t1 || rom[s + 22] !== 0x69) continue;
+    if (rom[s + 24] !== 0x85 || rom[s + 25] !== t1) continue;
+    const cpu = rom[s + 14] | (rom[s + 23] << 8);
+    const file = fixedWindowOff(cpu);
+    if (file == null || found.includes(file)) continue;
+    found.push(file);
+  }
+  return found;
+}
+
 function locateLevels(
   rom: Uint8Array,
   beta1: boolean,
@@ -330,7 +358,11 @@ function locateLevels(
   chrpals: number,
 ): { ld: number; built: Built } {
   const candidates: number[] = [];
+  // Journal 11 measured this file offset on the Beta 1 pin only.
   if (beta1 && matchesAt(rom, BETA1_LD10, TOWN_SIGNATURE)) candidates.push(BETA1_LD10);
+  for (const off of findLd10(rom)) {
+    if (!candidates.includes(off)) candidates.push(off);
+  }
   const prgEnd = INES_HEADER + PRG_BYTES;
   const tableBytes = LEVEL_COUNT * DESCRIPTOR_BYTES;
   for (let off = INES_HEADER; off + tableBytes <= prgEnd; off++) {

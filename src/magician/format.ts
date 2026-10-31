@@ -16,7 +16,11 @@ export const A000 = 0xa000;
 export const BETA1_SHA1 = "af51e12dbcd6acbdc914f0c63ed67d79165ce304";
 export const BETA1_LD10 = 0x1cf5d;
 
-/** Town (`ld10`) descriptor. Scan for this when the body is not Beta 1. */
+/**
+ * Town (`ld10`) descriptor on the Beta 1 pin.
+ * Fallback scan when `initlev` does not name the table. The banks and pointers
+ * still come from whichever 66 records that scan lands on.
+ */
 export const TOWN_SIGNATURE = new Uint8Array([
   0x08, 0x0b, 0x00, 0x00, 0x00, 0x00, 0xec, 0x00, 0x0b, 0x00, 0xa0, 0x7c, 0xa2, 0x18, 0xb4, 0x00,
 ]);
