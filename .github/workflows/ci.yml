@@ -1,5 +1,6 @@
 # Pull-request / main CI: install and production build (tsc + vite).
 # Selftest (npm run check) needs local .nes dumps and is not run in CI.
+# After that build succeeds, publish commit statuses for Vercel Deployment Checks.
 name: CI
 
 on:
@@ -10,6 +11,9 @@ on:
 
 permissions:
   contents: read
+  # vercel/repository-dispatch status lists this run's jobs, then writes a commit status.
+  actions: read
+  statuses: write
 
 jobs:
   build:
@@ -28,3 +32,18 @@ jobs:
         run: |
           npm ci
           npm run build
+
+      # Requested Vercel check name for this gate. The action's post step
+      # writes the status; it runs only after Install and build succeeds.
+      - name: notify vercel
+        uses: vercel/repository-dispatch/actions/status@v1
+        with:
+          name: "Vercel - magicianedit: lint"
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      # Job slug is build. No separate typecheck or test job runs in this workflow.
+      - name: notify vercel
+        uses: vercel/repository-dispatch/actions/status@v1
+        with:
+          name: "Vercel - magicianedit: build"
+          github_token: ${{ secrets.GITHUB_TOKEN }}
