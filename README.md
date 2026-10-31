@@ -1,12 +1,12 @@
 # MagicianEdit
 
-Browser-based map / object editor for **Magician** (NES, Taxan / Eurocom, MMC3) — **planned** port of [RobinEdit](https://github.com/ap0ught/robinedit).
+Browser-based map editor for **Magician** (NES, Taxan / Eurocom, MMC3), started from [RobinEdit](https://github.com/ap0ught/robinedit).
 
-This repository starts as a same-owner clone of `ap0ught/robinedit` (GitHub does not allow forking a repo you already own). The React + Vite + TypeScript shell remains; Magician ROM formats, map UI, objects, and play-from-map are **not** ported yet. Track work via GitHub **milestones** and **issues**.
+This repository starts as a same-owner clone of `ap0ught/robinedit` (GitHub does not allow forking a repo you already own). Open accepts a Magician MMC3 dump and Save writes map, block, colour, palette, and CHR packs back. Objects, play-from-map, and the title scene are not edited here. Track the rest via GitHub **milestones** and **issues**.
 
 ## Status
 
-**Planning only.** Package `magicianedit` **0.1.0**. Do not expect Magician load/save or map editing yet. The current tree still embeds Super Robin Hood (mapper 71) editor logic from RobinEdit until those milestones land. Port notes: [`journal/`](journal/). Inherited Robin notes: [`journals/`](journals/). Assistant guide: [`AGENTS.md`](AGENTS.md).
+Package `magicianedit` **0.1.0**. Load and save live in `src/magician/`. Mapper 71 carts are rejected. Port notes: [`journal/`](journal/). Inherited Robin notes: [`journals/`](journals/). Assistant guide: [`AGENTS.md`](AGENTS.md).
 
 ## Related repos
 
@@ -21,9 +21,9 @@ This repository starts as a same-owner clone of `ap0ught/robinedit` (GitHub does
 
 MagicianEdit will **not** ship Magician ROMs. Dump policy (Beta 1 pin, battery bit, vectors, gitignored `roms/`): **[`docs/ROMS.md`](docs/ROMS.md)**. Do **not** commit `.nes` files.
 
-Until Magician I/O lands, the inherited shell still expects a mapper 71 cart for local smoke tests. A Magician dump will not load yet.
+Place a dump you may use under `roms/`. `npm run check:magician` runs the load/save test on a synthetic cart and does not need a ROM.
 
-## Run (inherited shell)
+## Run
 
 ```bash
 make          # npm install if needed, then http://127.0.0.1:5173/
