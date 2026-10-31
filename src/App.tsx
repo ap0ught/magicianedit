@@ -49,6 +49,7 @@ import { ExitsRail, LevelHub } from "./LevelNav.tsx";
 import { AboutModal, ExportModal, OverviewModal, SaveReviewModal } from "./Modals.tsx";
 import { ObjectPanel, objectColumn } from "./ObjectPanel.tsx";
 import { copyBytes, download, playFromMap, type SavePicker } from "./playBridge.ts";
+import { downloadPlayFromMap, playUsesRomDownload } from "./playRomDownload.ts";
 import { Stage } from "./Stage.tsx";
 import { ChrSetPanel, PaletteModule, TilePanel } from "./TileChrome.tsx";
 
@@ -337,6 +338,15 @@ export function App() {
   }, [animKinds]);
 
   const info = doc ? LEVELS[level] : null;
+  const playSpawn =
+    robinPreview && robinPreview.level === level
+      ? { x: robinPreview.x, y: robinPreview.y }
+      : null;
+  const playCurrentMap = () => {
+    if (!doc) return;
+    const run = playUsesRomDownload() ? downloadPlayFromMap : playFromMap;
+    void run(doc, level, setError, playSpawn);
+  };
 
   return (
     <div
@@ -370,21 +380,13 @@ export function App() {
           disabled={!doc}
           className="play-from-map"
           title={
-            robinPreview && robinPreview.level === level
-              ? `Boot FCEUX on ${LEVELS[level].name} at the exit pose (title skipped)`
-              : `Boot FCEUX on ${LEVELS[level].name} (title skipped; floor spawn)`
+            playUsesRomDownload()
+              ? `Download a patched ROM that boots on ${LEVELS[level].name}`
+              : playSpawn
+                ? `Boot FCEUX on ${LEVELS[level].name} at the exit pose (title skipped)`
+                : `Boot FCEUX on ${LEVELS[level].name} (title skipped; floor spawn)`
           }
-          onClick={() => {
-            if (!doc) return;
-            void playFromMap(
-              doc,
-              level,
-              setError,
-              robinPreview && robinPreview.level === level
-                ? { x: robinPreview.x, y: robinPreview.y }
-                : null,
-            );
-          }}
+          onClick={playCurrentMap}
         >
           Play map
         </button>
@@ -815,16 +817,7 @@ export function App() {
                   level={level}
                   onCommit={commit}
                   onOpenOverview={() => setOverview(true)}
-                  onPlayMap={() =>
-                    void playFromMap(
-                      doc,
-                      level,
-                      setError,
-                      robinPreview && robinPreview.level === level
-                        ? { x: robinPreview.x, y: robinPreview.y }
-                        : null,
-                    )
-                  }
+                  onPlayMap={playCurrentMap}
                 />
               )}
               {mode === "robin" && (

@@ -9,6 +9,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
+    "play": "node --experimental-strip-types scripts/play-rom.ts",
     "check": "node --experimental-strip-types src/selftest.ts",
     "typecheck": "tsc -b"
   },

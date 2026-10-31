@@ -15,5 +15,5 @@
     "noUnusedParameters": true,
     "types": ["node"]
   },
-  "include": ["vite.config.ts", "vite.roms.ts", "vite.play-bridge.ts"]
+  "include": ["vite.config.ts", "vite.roms.ts", "vite.play-bridge.ts", "vite.play-rom.ts", "scripts/play-rom.ts"]
 }
