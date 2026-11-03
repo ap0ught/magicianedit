@@ -281,6 +281,28 @@ check(
 check(otherDoc.levels[0].map.width === 4 && otherDoc.levels[0].map.blocks[0] === 1, "other map bytes");
 check(sameBytes(saveMagician(otherDoc), other), "other clean save");
 
+const badPack = new Uint8Array(other);
+const badPackDesc = new Uint8Array(ALT_DESC);
+badPackDesc[11] = 0x21;
+badPackDesc[12] = 0xa0;
+for (let i = 0; i < 66; i++) badPack.set(badPackDesc, ALT_LD + i * 16);
+badPack.set([0x00, 0x04, 0x00, 0x02], ALT_MAP + 1);
+const packFallback = loadMagician(badPack, "pack-fallback.nes");
+check(packFallback.ld10Off === BETA1_LD10, `pack error fallback ${packFallback.ld10Off.toString(16)}`);
+
+const sceneOverlap = new Uint8Array(other);
+const sceneDesc = new Uint8Array(ALT_DESC);
+sceneDesc[0] = 0x07;
+sceneDesc[1] = 0x07;
+sceneDesc[11] = 0x80;
+sceneDesc[12] = 0xa0;
+sceneDesc[13] = 0x00;
+sceneDesc[14] = 0xa1;
+for (let i = 0; i < 66; i++) sceneOverlap.set(sceneDesc, ALT_LD + i * 16);
+sceneOverlap.set([0x00, 0x04, 0x00, 0x02], TIT + 0x100);
+const sceneFallback = loadMagician(sceneOverlap, "scene-fallback.nes");
+check(sceneFallback.ld10Off === BETA1_LD10, `scene error fallback ${sceneFallback.ld10Off.toString(16)}`);
+
 function golden(path: string, label: string, expect: (doc: MagicianDoc, rom: Uint8Array) => void) {
   if (!existsSync(path)) {
     console.log(`SKIP ${label} golden (missing ${path})`);
