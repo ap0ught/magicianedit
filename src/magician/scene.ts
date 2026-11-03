@@ -10,6 +10,13 @@ import {
 } from "./format.ts";
 import type { TitleScene } from "./document.ts";
 
+export class SceneLoadError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "SceneLoadError";
+  }
+}
+
 /** Find the packed TIT.DAT, PW.DAT, and PAN.DAT span, if present. */
 export function findScene(rom: Uint8Array): TitleScene | null {
   const end = INES_HEADER + PRG_BYTES - (TIT_DAT_BYTES + PW_DAT_BYTES + PAN_DAT_BYTES);
@@ -36,7 +43,7 @@ export function refuseScene(scene: TitleScene | null, off: number, length: numbe
   if (!scene) return;
   const span = TIT_DAT_BYTES + PW_DAT_BYTES + PAN_DAT_BYTES;
   if (rangesOverlap(off, length, scene.titOff, span)) {
-    throw new Error("MagicianEdit will not load the title, password, or panel scene as a level pack.");
+    throw new SceneLoadError("MagicianEdit will not load the title, password, or panel scene as a level pack.");
   }
 }
 

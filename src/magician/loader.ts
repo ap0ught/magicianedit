@@ -1,6 +1,6 @@
 /** Magician level loading assembly. */
 import { levelName } from "./names.ts";
-import { refuseScene } from "./scene.ts";
+import { refuseScene, SceneLoadError } from "./scene.ts";
 import { findLd10, readDescriptors, DescriptorError } from "./descriptors.ts";
 import { sizeRegions } from "./packs.ts";
 import { BETA1_LD10, CHR_PAGE, DESCRIPTOR_BYTES, INES_HEADER, LEVEL_COUNT, PAL_BYTES, PRG_BYTES, TOWN_SIGNATURE, chrPageOff, decodeMapByte } from "./format.ts";
@@ -38,6 +38,7 @@ export function loadLevels(
       if (err instanceof LoadError && err.code === "title") titleError = err;
       else if (err instanceof LoadError && err.code === "table") continue;
       else if (err instanceof DescriptorError) continue;
+      else if (err instanceof SceneLoadError) titleError = new LoadError("title", err.message);
       else throw err;
     }
   }

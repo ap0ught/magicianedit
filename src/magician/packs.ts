@@ -1,7 +1,7 @@
 /** Pack extent inference and shared map/byte-pack region discovery. */
 
 import { INES_HEADER, PRG_SLOT } from "./format.ts";
-import type { RawLevel } from "./descriptors.ts";
+import { DescriptorError, type RawLevel } from "./descriptors.ts";
 
 export interface Region {
   kind: "blk" | "map" | "col";
@@ -92,5 +92,5 @@ export function attributeRows(height: number): number {
 }
 
 function badTable(message: string): never {
-  throw new Error(`MagicianEdit could not read the level table: ${message}.`);
+  throw new DescriptorError(message);
 }
